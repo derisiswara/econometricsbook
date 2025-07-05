@@ -1,0 +1,37 @@
+/*-- scss:defaults --*/
+$theme: "cosmo" !default;
+
+/*-- scss:rules --*/
+
+.cover {
+  float: right;
+  margin-left: 20px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.quarto-title-banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.sidebar-title {
+  font-weight: bold;
+  color: #a3730b;
+}
+
+.sidebar-item a {
+  color: #333;
+  text-decoration: none;
+}
+
+.sidebar-item a:hover {
+  color: #a3730b;
+  background-color: #f8f9fa;
+}
+
+.quarto-secondary-nav {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
