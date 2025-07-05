@@ -1,0 +1,113 @@
+# Multivariate GARCH
+
+## DCC-GARCH
+
+```{r}
+library(quantmod)
+
+# Needed Internet Connection !! alike install packages
+# Stock Ticker
+stocks <- c("ASII.JK","BBCA.JK")
+
+data_list <- lapply(stocks, function(stock) {
+    getSymbols(stock, src = "yahoo", from = "2018-01-01", to="2022-12-31", auto.assign = FALSE)
+})
+
+# Daily Return
+returns <- lapply(data_list, function(data) {
+    dailyReturn(Cl(data))
+})
+
+# Combine data
+combined_returns <- do.call(merge, returns)
+names(combined_returns) <- stocks
+combined_returns <- na.omit(combined_returns)
+head(combined_returns)
+```
+
+```{r}
+library(rugarch)
+library(rmgarch)
+
+# GARCH Specification for a Single Asset
+unispec <- ugarchspec(mean.model = list(armaOrder = c(0, 0)),
+                     variance.model = list(model = "gjrGARCH",
+                                           garchOrder = c(1, 1)),
+                     distribution.model = "norm")
+
+# Determine the number of assets
+n_assets <- ncol(combined_returns)
+
+# Replicate GARCH Specification for All Assets
+garch_spec <- multispec(replicate(n_assets, unispec)) 
+
+# DCC Model Specification
+dcc_spec <- dccspec(uspec = garch_spec, 
+                   dccOrder = c(1, 1), 
+                   distribution = "mvnorm")
+```
+
+
+```{r}
+## Fit DCC
+dcc.fit <- dccfit(dcc_spec, 
+                 data = combined_returns, 
+                 fit.control=list(scale=TRUE))
+```
+
+
+```{r}
+dcc.fit
+```
+
+
+```{r}
+# Conditional Covariances
+cov <- rcov(dcc.fit)
+dim(cov)
+cov[,,1:4]
+```
+
+
+```{r}
+# Conditional Volatilities
+vol <- sigma(dcc.fit)
+head(vol)
+```
+
+```{r}
+plot(vol$ASII.JK)
+```
+
+```{r}
+plot(vol$BBCA.JK)
+```
+
+```{r}
+# Conditional Correlations
+cor <- rcor(dcc.fit)
+cor[,,1:4]
+```
+
+```{r}
+date <- row.names(data.frame(cor[1,1,])) 
+cor2 <- xts(cor[1, 2, ], order.by = as.Date(date))
+plot(cor2)
+```
+
+```{r}
+forecast <- dccforecast(dcc.fit, n.ahead = 5)
+```
+
+```{r}
+forecast@mforecast$H #Cov
+```
+
+```{r}
+forecast@mforecast$R #Cor
+```
+
+```{r}
+forecast@mforecast$mu
+```
+

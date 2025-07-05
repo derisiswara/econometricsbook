@@ -1,0 +1,145 @@
+# Univariate Time Series
+## Data EDA
+```{r}
+library(readxl)
+hargaberas <- read_excel("Data/Bab 3/ARIMA.xlsx")
+hargaberas = hargaberas[,c(-1)]
+hargaberas = ts(hargaberas, start=c(2012,1), frequency=12)
+hargaberas
+```
+
+```{r}
+plot(hargaberas, main="Harga Beras di Perdagangan Besar")
+```
+```{r}
+dekomposisi = decompose(hargaberas)
+plot(dekomposisi)
+```
+## ACF and PACF Plot
+```{r}
+# plot acf dan pacf
+par(mfrow=c(2,1))
+acf(hargaberas, lag=48)
+pacf(hargaberas, lag=48)
+```
+##Stationary Test
+```{r}
+library(aTSA)
+# Augmented Dickey-Fuller Test 
+adf.test(hargaberas)
+```
+
+```{r}
+# Firs Difference Form
+adf.test(diff(hargaberas))
+```
+## ARIMA
+```{r}
+library(forecast)
+auto.arima(hargaberas, trace=TRUE)
+```
+```{r}
+library(lmtest)
+# Best model: ARIMA(0,1,3)(2,1,0)[12]
+model1 = arima(hargaberas, order=c(0,1,3), seasonal=list(order=c(2,1,0), period=12))
+coeftest(model1)
+```
+
+```{r}
+# Arch Test
+arch.test(model1)
+```
+
+```{r}
+# Autocorrelartion Test
+Box.test(model1$residuals, lag = 1, type = c("Ljung-Box"), fitdf = 0)
+```
+
+```{r}
+# Forecasting
+forecast(model1, h=12)
+```
+
+```{r}
+plot(forecast(model1, h=12))
+```
+
+## ARCH-GARCH
+
+```{r}
+library(readxl)
+kurs <- read_excel("Data/Bab 3/ARCH-GARCH.xlsx")
+kurs = kurs[,c(-1)]
+Dates = seq(as.Date("2019-01-01"), as.Date("2020-12-31"), "day") 
+
+library(xts)
+kurs = xts(kurs, order.by = Dates)
+plot(kurs, main="Nilai Tukar US Dollar terhadap Rupiah")
+```
+
+```{r}
+# ARIMA
+auto.arima(kurs, trace=TRUE)
+```
+
+```{r}
+#  Best model: ARIMA(2,1,2)
+model2 = arima(kurs, order=c(2,1,2))
+coeftest(model2)
+```
+```{r}
+# ARCH Test
+arch.test(model2)
+```
+if p.value <- 0.05 = ARCH/GARCH
+
+```{r}
+library(fGarch)
+```
+
+```{r}
+# Stationary Test
+# Phillips-Perron Unit Root Test 
+pp.test(kurs)
+pp.test(diff(kurs))
+```
+
+```{r}
+e = diff(kurs)[-1]
+par(mfrow=c(1,1))
+acf(e)
+pacf(e)
+plot(e)
+```
+
+```{r}
+# ARCH(1) = GARCH(1,0)
+model10 = garchFit(~garch(1,0), data=e, trace=FALSE)
+summary(model10)
+```
+
+```{r}
+# GARCH(1,1)
+model11 = garchFit(~garch(1,1), data=e, trace=FALSE)
+summary(model11)
+```
+
+```{r}
+# GARCH(1,1) with mean equation ARMA(0,1)
+model11b = garchFit(~arma(0,1)+garch(1,1), data=e, trace=FALSE)
+summary(model11b)
+```
+
+```{r}
+# Best Model = "model11b"
+Dates2 = seq(as.Date("2019-01-02"), as.Date("2020-12-31"), "day") 
+stdev = xts(model11b@sigma.t, order.by = Dates2)
+plot(stdev, main="Simpangan Baku")
+```
+
+```{r}
+# Forecasting
+predict(model11b, n.ahead=20, plot=TRUE, nx=731)
+```
+
+

@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 3 Univariate Time Series | Application of Econometric Models with RStudio</title>
+<meta name="author" content="Deri Siswara">
+<meta name="description" content="3.1 Data EDA library(readxl) #&gt; Warning: package 'readxl' was built under R version 4.2.3 hargaberas &lt;- read_excel(&quot;Data/Bab 3/ARIMA.xlsx&quot;) hargaberas = hargaberas[,c(-1)] hargaberas =...">
+<meta name="generator" content="bookdown 0.38 with bs4_book()">
+<meta property="og:title" content="Chapter 3 Univariate Time Series | Application of Econometric Models with RStudio">
+<meta property="og:type" content="book">
+<meta property="og:description" content="3.1 Data EDA library(readxl) #&gt; Warning: package 'readxl' was built under R version 4.2.3 hargaberas &lt;- read_excel(&quot;Data/Bab 3/ARIMA.xlsx&quot;) hargaberas = hargaberas[,c(-1)] hargaberas =...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 3 Univariate Time Series | Application of Econometric Models with RStudio">
+<meta name="twitter:description" content="3.1 Data EDA library(readxl) #&gt; Warning: package 'readxl' was built under R version 4.2.3 hargaberas &lt;- read_excel(&quot;Data/Bab 3/ARIMA.xlsx&quot;) hargaberas = hargaberas[,c(-1)] hargaberas =...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.7.0/transition.js"></script><script src="libs/bs3compat-0.7.0/tabs.js"></script><script src="libs/bs3compat-0.7.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Application of Econometric Models with RStudio</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">Welcome</a></li>
+<li><a class="" href="basics-of-r.html"><span class="header-section-number">1</span> Basics of R</a></li>
+<li><a class="" href="basic-linear-regression.html"><span class="header-section-number">2</span> Basic Linear Regression</a></li>
+<li><a class="active" href="univariate-time-series.html"><span class="header-section-number">3</span> Univariate Time Series</a></li>
+<li><a class="" href="multivariate-time-series.html"><span class="header-section-number">4</span> Multivariate Time Series</a></li>
+<li><a class="" href="panel-data-regression.html"><span class="header-section-number">5</span> Panel Data Regression</a></li>
+<li><a class="" href="spatial-regression.html"><span class="header-section-number">6</span> Spatial Regression</a></li>
+<li><a class="" href="time-series-spillover---gvar.html"><span class="header-section-number">7</span> Time Series Spillover - GVAR</a></li>
+<li><a class="" href="multivariate-garch.html"><span class="header-section-number">8</span> Multivariate GARCH</a></li>
+<li><a class="" href="nardl.html"><span class="header-section-number">9</span> NARDL</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/dekayzds/ds-econometrics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="univariate-time-series" class="section level1" number="3">
+<h1>
+<span class="header-section-number">3</span> Univariate Time Series<a class="anchor" aria-label="anchor" href="#univariate-time-series"><i class="fas fa-link"></i></a>
+</h1>
+<div id="data-eda" class="section level2" number="3.1">
+<h2>
+<span class="header-section-number">3.1</span> Data EDA<a class="anchor" aria-label="anchor" href="#data-eda"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readxl.tidyverse.org">readxl</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'readxl' was built under R version 4.2.3</span></span>
+<span><span class="va">hargaberas</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html">read_excel</a></span><span class="op">(</span><span class="st">"Data/Bab 3/ARIMA.xlsx"</span><span class="op">)</span></span>
+<span><span class="va">hargaberas</span> <span class="op">=</span> <span class="va">hargaberas</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">hargaberas</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/ts.html">ts</a></span><span class="op">(</span><span class="va">hargaberas</span>, start<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2012</span>,<span class="fl">1</span><span class="op">)</span>, frequency<span class="op">=</span><span class="fl">12</span><span class="op">)</span></span>
+<span><span class="va">hargaberas</span></span>
+<span><span class="co">#&gt;        Jan   Feb   Mar   Apr   May   Jun   Jul   Aug   Sep</span></span>
+<span><span class="co">#&gt; 2012  8726  8778  8687  8583  8537  8554  8606  8635  8624</span></span>
+<span><span class="co">#&gt; 2013  8835  8843  8783  8711  8681  8784  9018  9057  9058</span></span>
+<span><span class="co">#&gt; 2014  9433  9531  9596  9425  9414  9462  9525  9525  9694</span></span>
+<span><span class="co">#&gt; 2015 10612 10766 10987 10648 10569 10679 10732 10935 11055</span></span>
+<span><span class="co">#&gt; 2016 11614 11729 11678 11449 11417 11469 11498 11475 11448</span></span>
+<span><span class="co">#&gt; 2017 11579 11571 11494 11449 11465 11465 11448 11411 11482</span></span>
+<span><span class="co">#&gt; 2018 12276 12414 12299 12035 11943 11907 11936 11899 11900</span></span>
+<span><span class="co">#&gt;        Oct   Nov   Dec</span></span>
+<span><span class="co">#&gt; 2012  8624  8655  8702</span></span>
+<span><span class="co">#&gt; 2013  9108  9152  9262</span></span>
+<span><span class="co">#&gt; 2014  9781  9924 10344</span></span>
+<span><span class="co">#&gt; 2015 11169 11365 11465</span></span>
+<span><span class="co">#&gt; 2016 11433 11450 11476</span></span>
+<span><span class="co">#&gt; 2017 11552 11665 11838</span></span>
+<span><span class="co">#&gt; 2018 11926 12013 12106</span></span></code></pre></div>
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">hargaberas</span>, main<span class="op">=</span><span class="st">"Harga Beras di Perdagangan Besar"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="03-Bab3_files/figure-html/unnamed-chunk-2-1.png" width="672"></div>
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dekomposisi</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/decompose.html">decompose</a></span><span class="op">(</span><span class="va">hargaberas</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">dekomposisi</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure">
+<img src="03-Bab3_files/figure-html/unnamed-chunk-3-1.png" width="672">
+## ACF and PACF Plot</div>
+<div class="sourceCode" id="cb75"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># plot acf dan pacf</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/acf.html">acf</a></span><span class="op">(</span><span class="va">hargaberas</span>, lag<span class="op">=</span><span class="fl">48</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/acf.html">pacf</a></span><span class="op">(</span><span class="va">hargaberas</span>, lag<span class="op">=</span><span class="fl">48</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure">
+<img src="03-Bab3_files/figure-html/unnamed-chunk-4-1.png" width="672">
+##Stationary Test</div>
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">aTSA</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'aTSA' was built under R version 4.2.3</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'aTSA'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:graphics':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     identify</span></span>
+<span><span class="co"># Augmented Dickey-Fuller Test </span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/aTSA/man/adf.test.html">adf.test</a></span><span class="op">(</span><span class="va">hargaberas</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Augmented Dickey-Fuller Test </span></span>
+<span><span class="co">#&gt; alternative: stationary </span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; Type 1: no drift no trend </span></span>
+<span><span class="co">#&gt;      lag  ADF p.value</span></span>
+<span><span class="co">#&gt; [1,]   0 2.96   0.990</span></span>
+<span><span class="co">#&gt; [2,]   1 1.65   0.975</span></span>
+<span><span class="co">#&gt; [3,]   2 2.04   0.990</span></span>
+<span><span class="co">#&gt; [4,]   3 2.18   0.990</span></span>
+<span><span class="co">#&gt; Type 2: with drift no trend </span></span>
+<span><span class="co">#&gt;      lag    ADF p.value</span></span>
+<span><span class="co">#&gt; [1,]   0 -0.537   0.858</span></span>
+<span><span class="co">#&gt; [2,]   1 -0.717   0.795</span></span>
+<span><span class="co">#&gt; [3,]   2 -0.831   0.755</span></span>
+<span><span class="co">#&gt; [4,]   3 -0.917   0.724</span></span>
+<span><span class="co">#&gt; Type 3: with drift and trend </span></span>
+<span><span class="co">#&gt;      lag   ADF p.value</span></span>
+<span><span class="co">#&gt; [1,]   0 -1.42   0.814</span></span>
+<span><span class="co">#&gt; [2,]   1 -2.56   0.340</span></span>
+<span><span class="co">#&gt; [3,]   2 -2.00   0.570</span></span>
+<span><span class="co">#&gt; [4,]   3 -1.78   0.663</span></span>
+<span><span class="co">#&gt; ---- </span></span>
+<span><span class="co">#&gt; Note: in fact, p.value = 0.01 means p.value &lt;= 0.01</span></span></code></pre></div>
+<div class="sourceCode" id="cb77"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Firs Difference Form</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/aTSA/man/adf.test.html">adf.test</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diff.html">diff</a></span><span class="op">(</span><span class="va">hargaberas</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Augmented Dickey-Fuller Test </span></span>
+<span><span class="co">#&gt; alternative: stationary </span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; Type 1: no drift no trend </span></span>
+<span><span class="co">#&gt;      lag   ADF p.value</span></span>
+<span><span class="co">#&gt; [1,]   0 -5.11    0.01</span></span>
+<span><span class="co">#&gt; [2,]   1 -5.02    0.01</span></span>
+<span><span class="co">#&gt; [3,]   2 -4.42    0.01</span></span>
+<span><span class="co">#&gt; [4,]   3 -4.36    0.01</span></span>
+<span><span class="co">#&gt; Type 2: with drift no trend </span></span>
+<span><span class="co">#&gt;      lag   ADF p.value</span></span>
+<span><span class="co">#&gt; [1,]   0 -5.47    0.01</span></span>
+<span><span class="co">#&gt; [2,]   1 -5.58    0.01</span></span>
+<span><span class="co">#&gt; [3,]   2 -5.10    0.01</span></span>
+<span><span class="co">#&gt; [4,]   3 -5.27    0.01</span></span>
+<span><span class="co">#&gt; Type 3: with drift and trend </span></span>
+<span><span class="co">#&gt;      lag   ADF p.value</span></span>
+<span><span class="co">#&gt; [1,]   0 -5.43    0.01</span></span>
+<span><span class="co">#&gt; [2,]   1 -5.55    0.01</span></span>
+<span><span class="co">#&gt; [3,]   2 -5.10    0.01</span></span>
+<span><span class="co">#&gt; [4,]   3 -5.28    0.01</span></span>
+<span><span class="co">#&gt; ---- </span></span>
+<span><span class="co">#&gt; Note: in fact, p.value = 0.01 means p.value &lt;= 0.01</span></span></code></pre></div>
+</div>
+<div id="arima" class="section level2" number="3.2">
+<h2>
+<span class="header-section-number">3.2</span> ARIMA<a class="anchor" aria-label="anchor" href="#arima"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://pkg.robjhyndman.com/forecast/">forecast</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'forecast' was built under R version 4.2.3</span></span>
+<span><span class="co">#&gt; Registered S3 method overwritten by 'quantmod':</span></span>
+<span><span class="co">#&gt;   method            from</span></span>
+<span><span class="co">#&gt;   as.zoo.data.frame zoo</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'forecast'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:aTSA':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     forecast</span></span>
+<span><span class="fu"><a href="https://pkg.robjhyndman.com/forecast/reference/auto.arima.html">auto.arima</a></span><span class="op">(</span><span class="va">hargaberas</span>, trace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  ARIMA(2,1,2)(1,1,1)[12]                    : Inf</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,0)(0,1,0)[12]                    : 884.0934</span></span>
+<span><span class="co">#&gt;  ARIMA(1,1,0)(1,1,0)[12]                    : 872.3993</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,1)(0,1,1)[12]                    : Inf</span></span>
+<span><span class="co">#&gt;  ARIMA(1,1,0)(0,1,0)[12]                    : 876.5573</span></span>
+<span><span class="co">#&gt;  ARIMA(1,1,0)(2,1,0)[12]                    : 863.6643</span></span>
+<span><span class="co">#&gt;  ARIMA(1,1,0)(2,1,1)[12]                    : Inf</span></span>
+<span><span class="co">#&gt;  ARIMA(1,1,0)(1,1,1)[12]                    : Inf</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,0)(2,1,0)[12]                    : 867.3178</span></span>
+<span><span class="co">#&gt;  ARIMA(2,1,0)(2,1,0)[12]                    : 865.871</span></span>
+<span><span class="co">#&gt;  ARIMA(1,1,1)(2,1,0)[12]                    : 865.1084</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,1)(2,1,0)[12]                    : 862.9856</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,1)(1,1,0)[12]                    : 871.9363</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,1)(2,1,1)[12]                    : Inf</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,1)(1,1,1)[12]                    : Inf</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,2)(2,1,0)[12]                    : 861.8543</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,2)(1,1,0)[12]                    : 872.2305</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,2)(2,1,1)[12]                    : Inf</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,2)(1,1,1)[12]                    : Inf</span></span>
+<span><span class="co">#&gt;  ARIMA(1,1,2)(2,1,0)[12]                    : 867.0498</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,3)(2,1,0)[12]                    : 854.8026</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,3)(1,1,0)[12]                    : 865.2557</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,3)(2,1,1)[12]                    : Inf</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,3)(1,1,1)[12]                    : Inf</span></span>
+<span><span class="co">#&gt;  ARIMA(1,1,3)(2,1,0)[12]                    : Inf</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,4)(2,1,0)[12]                    : 857.2177</span></span>
+<span><span class="co">#&gt;  ARIMA(1,1,4)(2,1,0)[12]                    : 859.7882</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Best model: ARIMA(0,1,3)(2,1,0)[12]</span></span>
+<span><span class="co">#&gt; Series: hargaberas </span></span>
+<span><span class="co">#&gt; ARIMA(0,1,3)(2,1,0)[12] </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;          ma1     ma2     ma3     sar1     sar2</span></span>
+<span><span class="co">#&gt;       0.3775  0.0028  0.4180  -0.4831  -0.4956</span></span>
+<span><span class="co">#&gt; s.e.  0.1166  0.1301  0.1403   0.1231   0.1239</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; sigma^2 = 7757:  log likelihood = -420.75</span></span>
+<span><span class="co">#&gt; AIC=853.49   AICc=854.8   BIC=867.07</span></span></code></pre></div>
+<div class="sourceCode" id="cb79"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">lmtest</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: zoo</span></span>
+<span><span class="co">#&gt; Warning: package 'zoo' was built under R version 4.2.3</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'zoo'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     as.Date, as.Date.numeric</span></span>
+<span><span class="co"># Best model: ARIMA(0,1,3)(2,1,0)[12]</span></span>
+<span><span class="va">model1</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/arima.html">arima</a></span><span class="op">(</span><span class="va">hargaberas</span>, order<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span>,<span class="fl">3</span><span class="op">)</span>, seasonal<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>order<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>, period<span class="op">=</span><span class="fl">12</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html">coeftest</a></span><span class="op">(</span><span class="va">model1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; z test of coefficients:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;       Estimate Std. Error z value  Pr(&gt;|z|)    </span></span>
+<span><span class="co">#&gt; ma1   0.377526   0.116627  3.2370  0.001208 ** </span></span>
+<span><span class="co">#&gt; ma2   0.002799   0.130115  0.0215  0.982837    </span></span>
+<span><span class="co">#&gt; ma3   0.417985   0.140264  2.9800  0.002883 ** </span></span>
+<span><span class="co">#&gt; sar1 -0.483126   0.123055 -3.9261 8.634e-05 ***</span></span>
+<span><span class="co">#&gt; sar2 -0.495630   0.123883 -4.0008 6.313e-05 ***</span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  </span></span>
+<span><span class="co">#&gt; 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre></div>
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Arch Test</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/aTSA/man/arch.test.html">arch.test</a></span><span class="op">(</span><span class="va">model1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; ARCH heteroscedasticity test for residuals </span></span>
+<span><span class="co">#&gt; alternative: heteroscedastic </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Portmanteau-Q test: </span></span>
+<span><span class="co">#&gt;      order    PQ p.value</span></span>
+<span><span class="co">#&gt; [1,]     4  5.41   0.247</span></span>
+<span><span class="co">#&gt; [2,]     8  8.53   0.384</span></span>
+<span><span class="co">#&gt; [3,]    12 11.36   0.498</span></span>
+<span><span class="co">#&gt; [4,]    16 13.03   0.670</span></span>
+<span><span class="co">#&gt; [5,]    20 14.44   0.808</span></span>
+<span><span class="co">#&gt; [6,]    24 16.04   0.887</span></span>
+<span><span class="co">#&gt; Lagrange-Multiplier test: </span></span>
+<span><span class="co">#&gt;      order    LM  p.value</span></span>
+<span><span class="co">#&gt; [1,]     4 41.16 6.04e-09</span></span>
+<span><span class="co">#&gt; [2,]     8 13.84 5.42e-02</span></span>
+<span><span class="co">#&gt; [3,]    12  6.06 8.69e-01</span></span>
+<span><span class="co">#&gt; [4,]    16  3.39 9.99e-01</span></span>
+<span><span class="co">#&gt; [5,]    20  2.16 1.00e+00</span></span>
+<span><span class="co">#&gt; [6,]    24  1.16 1.00e+00</span></span></code></pre></div>
+<div class="inline-figure"><img src="03-Bab3_files/figure-html/unnamed-chunk-9-1.png" width="672"></div>
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Autocorrelartion Test</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/box.test.html">Box.test</a></span><span class="op">(</span><span class="va">model1</span><span class="op">$</span><span class="va">residuals</span>, lag <span class="op">=</span> <span class="fl">1</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Ljung-Box"</span><span class="op">)</span>, fitdf <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Box-Ljung test</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; data:  model1$residuals</span></span>
+<span><span class="co">#&gt; X-squared = 0.0041444, df = 1, p-value = 0.9487</span></span></code></pre></div>
+<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Forecasting</span></span>
+<span><span class="fu"><a href="https://generics.r-lib.org/reference/forecast.html">forecast</a></span><span class="op">(</span><span class="va">model1</span>, h<span class="op">=</span><span class="fl">12</span><span class="op">)</span></span>
+<span><span class="co">#&gt;          Point Forecast    Lo 80    Hi 80    Lo 95    Hi 95</span></span>
+<span><span class="co">#&gt; Jan 2019       12355.67 12246.95 12464.39 12189.39 12521.95</span></span>
+<span><span class="co">#&gt; Feb 2019       12493.09 12308.02 12678.16 12210.05 12776.13</span></span>
+<span><span class="co">#&gt; Mar 2019       12392.80 12154.53 12631.07 12028.40 12757.21</span></span>
+<span><span class="co">#&gt; Apr 2019       12143.41 11835.19 12451.63 11672.03 12614.80</span></span>
+<span><span class="co">#&gt; May 2019       12079.80 11714.79 12444.80 11521.57 12638.02</span></span>
+<span><span class="co">#&gt; Jun 2019       12086.96 11672.89 12501.04 11453.70 12720.23</span></span>
+<span><span class="co">#&gt; Jul 2019       12116.54 11658.63 12574.45 11416.22 12816.85</span></span>
+<span><span class="co">#&gt; Aug 2019       12086.48 11588.57 12584.38 11325.00 12847.96</span></span>
+<span><span class="co">#&gt; Sep 2019       12072.73 11537.81 12607.64 11254.64 12890.81</span></span>
+<span><span class="co">#&gt; Oct 2019       12077.85 11508.32 12647.38 11206.83 12948.88</span></span>
+<span><span class="co">#&gt; Nov 2019       12129.83 11527.68 12731.99 11208.92 13050.75</span></span>
+<span><span class="co">#&gt; Dec 2019       12188.63 11555.52 12821.73 11220.38 13156.88</span></span></code></pre></div>
+<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://generics.r-lib.org/reference/forecast.html">forecast</a></span><span class="op">(</span><span class="va">model1</span>, h<span class="op">=</span><span class="fl">12</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="03-Bab3_files/figure-html/unnamed-chunk-12-1.png" width="672"></div>
+</div>
+<div id="arch-garch" class="section level2" number="3.3">
+<h2>
+<span class="header-section-number">3.3</span> ARCH-GARCH<a class="anchor" aria-label="anchor" href="#arch-garch"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readxl.tidyverse.org">readxl</a></span><span class="op">)</span></span>
+<span><span class="va">kurs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html">read_excel</a></span><span class="op">(</span><span class="st">"Data/Bab 3/ARCH-GARCH.xlsx"</span><span class="op">)</span></span>
+<span><span class="va">kurs</span> <span class="op">=</span> <span class="va">kurs</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">Dates</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/zoo/man/yearmon.html">as.Date</a></span><span class="op">(</span><span class="st">"2019-01-01"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/zoo/man/yearmon.html">as.Date</a></span><span class="op">(</span><span class="st">"2020-12-31"</span><span class="op">)</span>, <span class="st">"day"</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://joshuaulrich.github.io/xts/">xts</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'xts' was built under R version 4.2.3</span></span>
+<span><span class="va">kurs</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/xts/man/xts.html">xts</a></span><span class="op">(</span><span class="va">kurs</span>, order.by <span class="op">=</span> <span class="va">Dates</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">kurs</span>, main<span class="op">=</span><span class="st">"Nilai Tukar US Dollar terhadap Rupiah"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="03-Bab3_files/figure-html/unnamed-chunk-13-1.png" width="672"></div>
+<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># ARIMA</span></span>
+<span><span class="fu"><a href="https://pkg.robjhyndman.com/forecast/reference/auto.arima.html">auto.arima</a></span><span class="op">(</span><span class="va">kurs</span>, trace<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Fitting models using approximations to speed things up...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  ARIMA(2,1,2) with drift         : 8738.664</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,0) with drift         : 8755.631</span></span>
+<span><span class="co">#&gt;  ARIMA(1,1,0) with drift         : 8745.702</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,1) with drift         : 8744.836</span></span>
+<span><span class="co">#&gt;  ARIMA(0,1,0)                    : 8753.644</span></span>
+<span><span class="co">#&gt;  ARIMA(1,1,2) with drift         : 8742.017</span></span>
+<span><span class="co">#&gt;  ARIMA(2,1,1) with drift         : 8748.12</span></span>
+<span><span class="co">#&gt;  ARIMA(3,1,2) with drift         : 8746.649</span></span>
+<span><span class="co">#&gt;  ARIMA(2,1,3) with drift         : 8740.697</span></span>
+<span><span class="co">#&gt;  ARIMA(1,1,1) with drift         : 8746.629</span></span>
+<span><span class="co">#&gt;  ARIMA(1,1,3) with drift         : 8743.813</span></span>
+<span><span class="co">#&gt;  ARIMA(3,1,1) with drift         : 8748.657</span></span>
+<span><span class="co">#&gt;  ARIMA(3,1,3) with drift         : 8751.34</span></span>
+<span><span class="co">#&gt;  ARIMA(2,1,2)                    : 8736.651</span></span>
+<span><span class="co">#&gt;  ARIMA(1,1,2)                    : 8740.011</span></span>
+<span><span class="co">#&gt;  ARIMA(2,1,1)                    : 8746.122</span></span>
+<span><span class="co">#&gt;  ARIMA(3,1,2)                    : 8744.611</span></span>
+<span><span class="co">#&gt;  ARIMA(2,1,3)                    : 8738.68</span></span>
+<span><span class="co">#&gt;  ARIMA(1,1,1)                    : 8744.657</span></span>
+<span><span class="co">#&gt;  ARIMA(1,1,3)                    : 8741.802</span></span>
+<span><span class="co">#&gt;  ARIMA(3,1,1)                    : 8746.636</span></span>
+<span><span class="co">#&gt;  ARIMA(3,1,3)                    : 8749.317</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Now re-fitting the best model(s) without approximations...</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  ARIMA(2,1,2)                    : 8739.165</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Best model: ARIMA(2,1,2)</span></span>
+<span><span class="co">#&gt; Series: kurs </span></span>
+<span><span class="co">#&gt; ARIMA(2,1,2) </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;          ar1      ar2      ma1     ma2</span></span>
+<span><span class="co">#&gt;       1.2304  -0.7997  -1.3560  0.8726</span></span>
+<span><span class="co">#&gt; s.e.  0.0650   0.0506   0.0599  0.0425</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; sigma^2 = 9181:  log likelihood = -4364.54</span></span>
+<span><span class="co">#&gt; AIC=8739.08   AICc=8739.16   BIC=8762.05</span></span></code></pre></div>
+<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">#  Best model: ARIMA(2,1,2)</span></span>
+<span><span class="va">model2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/arima.html">arima</a></span><span class="op">(</span><span class="va">kurs</span>, order<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html">coeftest</a></span><span class="op">(</span><span class="va">model2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; z test of coefficients:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      Estimate Std. Error z value  Pr(&gt;|z|)    </span></span>
+<span><span class="co">#&gt; ar1  1.230421   0.065027  18.922 &lt; 2.2e-16 ***</span></span>
+<span><span class="co">#&gt; ar2 -0.799713   0.050577 -15.812 &lt; 2.2e-16 ***</span></span>
+<span><span class="co">#&gt; ma1 -1.355960   0.059905 -22.635 &lt; 2.2e-16 ***</span></span>
+<span><span class="co">#&gt; ma2  0.872641   0.042457  20.554 &lt; 2.2e-16 ***</span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  </span></span>
+<span><span class="co">#&gt; 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span></code></pre></div>
+<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># ARCH Test</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/aTSA/man/arch.test.html">arch.test</a></span><span class="op">(</span><span class="va">model2</span><span class="op">)</span></span>
+<span><span class="co">#&gt; ARCH heteroscedasticity test for residuals </span></span>
+<span><span class="co">#&gt; alternative: heteroscedastic </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Portmanteau-Q test: </span></span>
+<span><span class="co">#&gt;      order    PQ p.value</span></span>
+<span><span class="co">#&gt; [1,]     4  70.7 1.6e-14</span></span>
+<span><span class="co">#&gt; [2,]     8 134.2 0.0e+00</span></span>
+<span><span class="co">#&gt; [3,]    12 188.4 0.0e+00</span></span>
+<span><span class="co">#&gt; [4,]    16 206.3 0.0e+00</span></span>
+<span><span class="co">#&gt; [5,]    20 216.8 0.0e+00</span></span>
+<span><span class="co">#&gt; [6,]    24 225.0 0.0e+00</span></span>
+<span><span class="co">#&gt; Lagrange-Multiplier test: </span></span>
+<span><span class="co">#&gt;      order   LM  p.value</span></span>
+<span><span class="co">#&gt; [1,]     4 1471 0.00e+00</span></span>
+<span><span class="co">#&gt; [2,]     8  446 0.00e+00</span></span>
+<span><span class="co">#&gt; [3,]    12  251 0.00e+00</span></span>
+<span><span class="co">#&gt; [4,]    16  179 0.00e+00</span></span>
+<span><span class="co">#&gt; [5,]    20  135 0.00e+00</span></span>
+<span><span class="co">#&gt; [6,]    24  106 1.14e-12</span></span></code></pre></div>
+<div class="inline-figure">
+<img src="03-Bab3_files/figure-html/unnamed-chunk-16-1.png" width="672">
+if p.value &lt;- 0.05 = ARCH/GARCH</div>
+<div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://geobosh.github.io/fGarchDoc/">fGarch</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'fGarch' was built under R version 4.2.3</span></span>
+<span><span class="co">#&gt; NOTE: Packages 'fBasics', 'timeDate', and 'timeSeries' are no longer</span></span>
+<span><span class="co">#&gt; attached to the search() path when 'fGarch' is attached.</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; If needed attach them yourself in your R script by e.g.,</span></span>
+<span><span class="co">#&gt;         require("timeSeries")</span></span></code></pre></div>
+<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Stationary Test</span></span>
+<span><span class="co"># Phillips-Perron Unit Root Test </span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/aTSA/man/pp.test.html">pp.test</a></span><span class="op">(</span><span class="va">kurs</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Phillips-Perron Unit Root Test </span></span>
+<span><span class="co">#&gt; alternative: stationary </span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; Type 1: no drift no trend </span></span>
+<span><span class="co">#&gt;  lag   Z_rho p.value</span></span>
+<span><span class="co">#&gt;    6 -0.0408   0.683</span></span>
+<span><span class="co">#&gt; ----- </span></span>
+<span><span class="co">#&gt;  Type 2: with drift no trend </span></span>
+<span><span class="co">#&gt;  lag Z_rho p.value</span></span>
+<span><span class="co">#&gt;    6 -11.1   0.107</span></span>
+<span><span class="co">#&gt; ----- </span></span>
+<span><span class="co">#&gt;  Type 3: with drift and trend </span></span>
+<span><span class="co">#&gt;  lag Z_rho p.value</span></span>
+<span><span class="co">#&gt;    6 -12.1   0.367</span></span>
+<span><span class="co">#&gt; --------------- </span></span>
+<span><span class="co">#&gt; Note: p-value = 0.01 means p.value &lt;= 0.01</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/aTSA/man/pp.test.html">pp.test</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diff.html">diff</a></span><span class="op">(</span><span class="va">kurs</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Phillips-Perron Unit Root Test </span></span>
+<span><span class="co">#&gt; alternative: stationary </span></span>
+<span><span class="co">#&gt;  </span></span>
+<span><span class="co">#&gt; Type 1: no drift no trend </span></span>
+<span><span class="co">#&gt;  lag Z_rho p.value</span></span>
+<span><span class="co">#&gt;    6  -804    0.01</span></span>
+<span><span class="co">#&gt; ----- </span></span>
+<span><span class="co">#&gt;  Type 2: with drift no trend </span></span>
+<span><span class="co">#&gt;  lag Z_rho p.value</span></span>
+<span><span class="co">#&gt;    6  -804    0.01</span></span>
+<span><span class="co">#&gt; ----- </span></span>
+<span><span class="co">#&gt;  Type 3: with drift and trend </span></span>
+<span><span class="co">#&gt;  lag Z_rho p.value</span></span>
+<span><span class="co">#&gt;    6  -804    0.01</span></span>
+<span><span class="co">#&gt; --------------- </span></span>
+<span><span class="co">#&gt; Note: p-value = 0.01 means p.value &lt;= 0.01</span></span></code></pre></div>
+<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">e</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/diff.html">diff</a></span><span class="op">(</span><span class="va">kurs</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/acf.html">acf</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="03-Bab3_files/figure-html/unnamed-chunk-19-1.png" width="672"></div>
+<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/acf.html">pacf</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="03-Bab3_files/figure-html/unnamed-chunk-19-2.png" width="672"></div>
+<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://geobosh.github.io/fGarchDoc/reference/methods-plot.html">plot</a></span><span class="op">(</span><span class="va">e</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="03-Bab3_files/figure-html/unnamed-chunk-19-3.png" width="672"></div>
+<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># ARCH(1) = GARCH(1,0)</span></span>
+<span><span class="va">model10</span> <span class="op">=</span> <span class="fu"><a href="https://geobosh.github.io/fGarchDoc/reference/garchFit.html">garchFit</a></span><span class="op">(</span><span class="op">~</span><span class="fu">garch</span><span class="op">(</span><span class="fl">1</span>,<span class="fl">0</span><span class="op">)</span>, data<span class="op">=</span><span class="va">e</span>, trace<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://geobosh.github.io/fGarchDoc/reference/methods-summary.html">summary</a></span><span class="op">(</span><span class="va">model10</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Title:</span></span>
+<span><span class="co">#&gt;  GARCH Modelling </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt;  garchFit(formula = ~garch(1, 0), data = e, trace = FALSE) </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Mean and Variance Equation:</span></span>
+<span><span class="co">#&gt;  data ~ garch(1, 0)</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x000002dce167b308&gt;</span></span>
+<span><span class="co">#&gt;  [data = e]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Conditional Distribution:</span></span>
+<span><span class="co">#&gt;  norm </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficient(s):</span></span>
+<span><span class="co">#&gt;         mu       omega      alpha1  </span></span>
+<span><span class="co">#&gt;   -1.15887  5442.67260     0.61303  </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Std. Errors:</span></span>
+<span><span class="co">#&gt;  based on Hessian </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Error Analysis:</span></span>
+<span><span class="co">#&gt;         Estimate  Std. Error  t value Pr(&gt;|t|)    </span></span>
+<span><span class="co">#&gt; mu       -1.1589      2.8293   -0.410    0.682    </span></span>
+<span><span class="co">#&gt; omega  5442.6726    374.5058   14.533  &lt; 2e-16 ***</span></span>
+<span><span class="co">#&gt; alpha1    0.6130      0.1073    5.713 1.11e-08 ***</span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  </span></span>
+<span><span class="co">#&gt; 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Log Likelihood:</span></span>
+<span><span class="co">#&gt;  -4303.768    normalized:  -5.895573 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Description:</span></span>
+<span><span class="co">#&gt;  Tue Apr  2 18:23:56 2024 by user: derik </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Standardised Residuals Tests:</span></span>
+<span><span class="co">#&gt;                                   Statistic      p-Value</span></span>
+<span><span class="co">#&gt;  Jarque-Bera Test   R    Chi^2  4839.704454 0.000000e+00</span></span>
+<span><span class="co">#&gt;  Shapiro-Wilk Test  R    W         0.839958 0.000000e+00</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R    Q(10)    29.630084 9.844469e-04</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R    Q(15)    39.676117 5.074432e-04</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R    Q(20)    41.959542 2.799349e-03</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R^2  Q(10)    91.109411 3.219647e-15</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R^2  Q(15)   147.246211 0.000000e+00</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R^2  Q(20)   159.654019 0.000000e+00</span></span>
+<span><span class="co">#&gt;  LM Arch Test       R    TR^2    114.581427 0.000000e+00</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Information Criterion Statistics:</span></span>
+<span><span class="co">#&gt;      AIC      BIC      SIC     HQIC </span></span>
+<span><span class="co">#&gt; 11.79937 11.81824 11.79933 11.80665</span></span></code></pre></div>
+<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># GARCH(1,1)</span></span>
+<span><span class="va">model11</span> <span class="op">=</span> <span class="fu"><a href="https://geobosh.github.io/fGarchDoc/reference/garchFit.html">garchFit</a></span><span class="op">(</span><span class="op">~</span><span class="fu">garch</span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, data<span class="op">=</span><span class="va">e</span>, trace<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://geobosh.github.io/fGarchDoc/reference/methods-summary.html">summary</a></span><span class="op">(</span><span class="va">model11</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Title:</span></span>
+<span><span class="co">#&gt;  GARCH Modelling </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt;  garchFit(formula = ~garch(1, 1), data = e, trace = FALSE) </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Mean and Variance Equation:</span></span>
+<span><span class="co">#&gt;  data ~ garch(1, 1)</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x000002dcdd0f4c88&gt;</span></span>
+<span><span class="co">#&gt;  [data = e]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Conditional Distribution:</span></span>
+<span><span class="co">#&gt;  norm </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficient(s):</span></span>
+<span><span class="co">#&gt;        mu      omega     alpha1      beta1  </span></span>
+<span><span class="co">#&gt;  -2.41759  366.97243    0.25035    0.74326  </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Std. Errors:</span></span>
+<span><span class="co">#&gt;  based on Hessian </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Error Analysis:</span></span>
+<span><span class="co">#&gt;         Estimate  Std. Error  t value Pr(&gt;|t|)    </span></span>
+<span><span class="co">#&gt; mu      -2.41759     2.21121   -1.093    0.274    </span></span>
+<span><span class="co">#&gt; omega  366.97243    87.52212    4.193 2.75e-05 ***</span></span>
+<span><span class="co">#&gt; alpha1   0.25035     0.04215    5.940 2.85e-09 ***</span></span>
+<span><span class="co">#&gt; beta1    0.74326     0.03132   23.734  &lt; 2e-16 ***</span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  </span></span>
+<span><span class="co">#&gt; 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Log Likelihood:</span></span>
+<span><span class="co">#&gt;  -4188.199    normalized:  -5.73726 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Description:</span></span>
+<span><span class="co">#&gt;  Tue Apr  2 18:23:57 2024 by user: derik </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Standardised Residuals Tests:</span></span>
+<span><span class="co">#&gt;                                    Statistic     p-Value</span></span>
+<span><span class="co">#&gt;  Jarque-Bera Test   R    Chi^2  1527.8453918 0.000000000</span></span>
+<span><span class="co">#&gt;  Shapiro-Wilk Test  R    W         0.9121068 0.000000000</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R    Q(10)    28.3515449 0.001585409</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R    Q(15)    31.1437861 0.008403721</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R    Q(20)    32.4515824 0.038717821</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R^2  Q(10)     4.8877686 0.898547890</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R^2  Q(15)     9.1420869 0.869971665</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R^2  Q(20)    11.4700910 0.933109272</span></span>
+<span><span class="co">#&gt;  LM Arch Test       R    TR^2      5.5858039 0.935507008</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Information Criterion Statistics:</span></span>
+<span><span class="co">#&gt;      AIC      BIC      SIC     HQIC </span></span>
+<span><span class="co">#&gt; 11.48548 11.51065 11.48542 11.49519</span></span></code></pre></div>
+<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># GARCH(1,1) with mean equation ARMA(0,1)</span></span>
+<span><span class="va">model11b</span> <span class="op">=</span> <span class="fu"><a href="https://geobosh.github.io/fGarchDoc/reference/garchFit.html">garchFit</a></span><span class="op">(</span><span class="op">~</span><span class="fu">arma</span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span><span class="op">+</span><span class="fu">garch</span><span class="op">(</span><span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, data<span class="op">=</span><span class="va">e</span>, trace<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://geobosh.github.io/fGarchDoc/reference/methods-summary.html">summary</a></span><span class="op">(</span><span class="va">model11b</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Title:</span></span>
+<span><span class="co">#&gt;  GARCH Modelling </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt;  garchFit(formula = ~arma(0, 1) + garch(1, 1), data = e, trace = FALSE) </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Mean and Variance Equation:</span></span>
+<span><span class="co">#&gt;  data ~ arma(0, 1) + garch(1, 1)</span></span>
+<span><span class="co">#&gt; &lt;environment: 0x000002dcd966c250&gt;</span></span>
+<span><span class="co">#&gt;  [data = e]</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Conditional Distribution:</span></span>
+<span><span class="co">#&gt;  norm </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficient(s):</span></span>
+<span><span class="co">#&gt;        mu        ma1      omega     alpha1      beta1  </span></span>
+<span><span class="co">#&gt;  -2.53982   -0.22537  337.43876    0.23716    0.75465  </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Std. Errors:</span></span>
+<span><span class="co">#&gt;  based on Hessian </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Error Analysis:</span></span>
+<span><span class="co">#&gt;         Estimate  Std. Error  t value Pr(&gt;|t|)    </span></span>
+<span><span class="co">#&gt; mu      -2.53982     1.74379   -1.456    0.145    </span></span>
+<span><span class="co">#&gt; ma1     -0.22537     0.04724   -4.771 1.83e-06 ***</span></span>
+<span><span class="co">#&gt; omega  337.43876    85.21204    3.960 7.50e-05 ***</span></span>
+<span><span class="co">#&gt; alpha1   0.23716     0.04038    5.874 4.26e-09 ***</span></span>
+<span><span class="co">#&gt; beta1    0.75465     0.03129   24.118  &lt; 2e-16 ***</span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  </span></span>
+<span><span class="co">#&gt; 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Log Likelihood:</span></span>
+<span><span class="co">#&gt;  -4177.446    normalized:  -5.722529 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Description:</span></span>
+<span><span class="co">#&gt;  Tue Apr  2 18:23:57 2024 by user: derik </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Standardised Residuals Tests:</span></span>
+<span><span class="co">#&gt;                                    Statistic    p-Value</span></span>
+<span><span class="co">#&gt;  Jarque-Bera Test   R    Chi^2  1331.0510666 0.00000000</span></span>
+<span><span class="co">#&gt;  Shapiro-Wilk Test  R    W         0.9147019 0.00000000</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R    Q(10)    20.1208930 0.02812976</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R    Q(15)    23.9601552 0.06577322</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R    Q(20)    26.1490497 0.16094547</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R^2  Q(10)     4.7499032 0.90724638</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R^2  Q(15)     8.8134669 0.88706688</span></span>
+<span><span class="co">#&gt;  Ljung-Box Test     R^2  Q(20)    11.6275315 0.92829976</span></span>
+<span><span class="co">#&gt;  LM Arch Test       R    TR^2      5.4233826 0.94232413</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Information Criterion Statistics:</span></span>
+<span><span class="co">#&gt;      AIC      BIC      SIC     HQIC </span></span>
+<span><span class="co">#&gt; 11.45876 11.49021 11.45866 11.47089</span></span></code></pre></div>
+<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Best Model = "model11b"</span></span>
+<span><span class="va">Dates2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/zoo/man/yearmon.html">as.Date</a></span><span class="op">(</span><span class="st">"2019-01-02"</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/zoo/man/yearmon.html">as.Date</a></span><span class="op">(</span><span class="st">"2020-12-31"</span><span class="op">)</span>, <span class="st">"day"</span><span class="op">)</span> </span>
+<span><span class="va">stdev</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/xts/man/xts.html">xts</a></span><span class="op">(</span><span class="va">model11b</span><span class="op">@</span><span class="va">sigma.t</span>, order.by <span class="op">=</span> <span class="va">Dates2</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://geobosh.github.io/fGarchDoc/reference/methods-plot.html">plot</a></span><span class="op">(</span><span class="va">stdev</span>, main<span class="op">=</span><span class="st">"Simpangan Baku"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="03-Bab3_files/figure-html/unnamed-chunk-23-1.png" width="672"></div>
+<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Forecasting</span></span>
+<span><span class="fu"><a href="https://geobosh.github.io/fGarchDoc/reference/methods-predict.html">predict</a></span><span class="op">(</span><span class="va">model11b</span>, n.ahead<span class="op">=</span><span class="fl">20</span>, plot<span class="op">=</span><span class="cn">TRUE</span>, nx<span class="op">=</span><span class="fl">731</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="03-Bab3_files/figure-html/unnamed-chunk-24-1.png" width="672"></div>
+<pre><code>#&gt;    meanForecast meanError standardDeviation lowerInterval
+#&gt; 1     15.748251  76.11087          76.11087     -133.4263
+#&gt; 2     -2.539819  79.85676          77.99279     -159.0562
+#&gt; 3     -2.539819  81.72802          79.81549     -162.7238
+#&gt; 4     -2.539819  83.54257          81.58306     -166.2802
+#&gt; 5     -2.539819  85.30415          83.29911     -169.7329
+#&gt; 6     -2.539819  87.01608          84.96689     -173.0882
+#&gt; 7     -2.539819  88.68137          86.58929     -176.3521
+#&gt; 8     -2.539819  90.30269          88.16892     -179.5298
+#&gt; 9     -2.539819  91.88248          89.70815     -182.6262
+#&gt; 10    -2.539819  93.42296          91.20912     -185.6454
+#&gt; 11    -2.539819  94.92613          92.67380     -188.5916
+#&gt; 12    -2.539819  96.39384          94.10397     -191.4683
+#&gt; 13    -2.539819  97.82780          95.50128     -194.2788
+#&gt; 14    -2.539819  99.22954          96.86724     -197.0261
+#&gt; 15    -2.539819 100.60052          98.20325     -199.7132
+#&gt; 16    -2.539819 101.94206          99.51061     -202.3426
+#&gt; 17    -2.539819 103.25541         100.79051     -204.9167
+#&gt; 18    -2.539819 104.54171         102.04409     -207.4378
+#&gt; 19    -2.539819 105.80203         103.27236     -209.9080
+#&gt; 20    -2.539819 107.03737         104.47632     -212.3292
+#&gt;    upperInterval
+#&gt; 1       164.9228
+#&gt; 2       153.9765
+#&gt; 3       157.6442
+#&gt; 4       161.2006
+#&gt; 5       164.6532
+#&gt; 6       168.0086
+#&gt; 7       171.2725
+#&gt; 8       174.4502
+#&gt; 9       177.5465
+#&gt; 10      180.5658
+#&gt; 11      183.5120
+#&gt; 12      186.3886
+#&gt; 13      189.1991
+#&gt; 14      191.9465
+#&gt; 15      194.6336
+#&gt; 16      197.2630
+#&gt; 17      199.8371
+#&gt; 18      202.3582
+#&gt; 19      204.8283
+#&gt; 20      207.2496</code></pre>
+
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="basic-linear-regression.html"><span class="header-section-number">2</span> Basic Linear Regression</a></div>
+<div class="next"><a href="multivariate-time-series.html"><span class="header-section-number">4</span> Multivariate Time Series</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#univariate-time-series"><span class="header-section-number">3</span> Univariate Time Series</a></li>
+<li><a class="nav-link" href="#data-eda"><span class="header-section-number">3.1</span> Data EDA</a></li>
+<li><a class="nav-link" href="#arima"><span class="header-section-number">3.2</span> ARIMA</a></li>
+<li><a class="nav-link" href="#arch-garch"><span class="header-section-number">3.3</span> ARCH-GARCH</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/dekayzds/ds-econometrics/blob/master/03-Bab3.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/dekayzds/ds-econometrics/edit/master/03-Bab3.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Application of Econometric Models with RStudio</strong>" was written by Deri Siswara. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

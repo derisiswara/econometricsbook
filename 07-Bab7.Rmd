@@ -1,0 +1,199 @@
+# Time Series Spillover - GVAR
+## Library
+```{r,warning=FALSE}
+library(Spillover)
+library(vars)
+library(urca)
+library(splitstackshape)
+library(igraph)
+library(reshape)
+```
+
+## Data: Diebold-Yilmaz 2012
+
+```{r}
+data(dy2012)
+head(dy2012)  # in log volatility form
+```
+
+**log volatility return:** 
+$$
+\sigma^2_{it} = 0.361[ln(P^{max}_{i,t}) - ln(P^{min}_{i,t-1}))]^2
+$$
+
+$$
+\sigma_{it} = 100*(\sqrt{252*\sigma^2_{it}})
+$$
+
+
+```{r}
+class(dy2012)
+```
+
+```{r}
+nrow(dy2012)
+```
+
+## VAR Model
+
+```{r}
+PP.test(dy2012$Stocks)
+PP.test(dy2012$Bonds)
+PP.test(dy2012$Commodities)
+PP.test(dy2012$FX)
+```
+
+```{r}
+# Optimum Lag
+VARselect(dy2012[,-1], lag.max = 4, type = c("both"))
+```
+
+```{r}
+# VAR Model
+VAR_4 <- VAR(dy2012[,-1], p=4)
+VAR_4
+```
+
+## Volatility Spillover DY-2012
+
+```{r}
+# Total Spillover Index
+sp <- G.spillover(VAR_4, n.ahead = 10, standardized = F )
+sp
+```
+
+The total volatility spillover appears in the lower right corner of Table, which indicates that, on average, across our entire sample, 12.6% of the volatility forecast error variance in all four markets comes from spillovers
+
+
+```{r}
+Spillover::net(sp)
+```
+
+## Dynamic Spillover Index / rolling-sample total volatility spillover
+
+```{r}
+# Data Setting
+data(dy2012)
+dy2012$Date <- as.Date(dy2012$Date, "%Y-%m-%d")
+dy2012 <- as.zoo(dy2012[,-1], order.by = dy2012$Date)
+class(dy2012)
+```
+
+```{r}
+# Generalized rolling spillover index based on a VAR(4)
+G_index<- total.dynamic.spillover(dy2012, width = 200, index="generalized", p=4) 
+head(G_index, n=10)
+```
+
+```{r}
+plot(G_index)
+```
+
+## Directional volatility spillovers
+
+```{r}
+library(zoo)
+data(dy2012) # re-import data
+class(dy2012)
+```
+
+```{r}
+dy_results <- dynamic.spillover(dy2012, width=200, remove.own = FALSE)
+str(dy_results)
+```
+
+```{r}
+# Directional volatility spillovers, FROM four asset classes.
+pp_from <- plotdy(dy_results, direction = "from")
+```
+
+```{r}
+# Directional volatility spillovers, TO four asset classes.
+pp_to <- plotdy(dy_results, direction = "to")
+```
+
+```{r}
+# Net volatility spillovers, four asset classes
+pp_net <- plotdy(dy_results, direction = "net")
+```
+
+
+```{r}
+# Net pairwise volatility spillovers
+pp_netpairwise <- plotdy(dy_results, direction = "net_pairwise")
+```
+
+```{r}
+pp_from_to_pairwise <- plotdy(dy_results, direction = "from_to_pairwise")
+```
+
+## Connectedness Network
+
+```{r}
+sp <- G.spillover(VAR_4, n.ahead = 10, standardized = F )
+datanet <-  Spillover::net(sp)
+datanet
+```
+
+```{r}
+# Data frame node
+node_df <- data.frame(rownames(datanet), rownames(datanet),datanet$Net)
+names(node_df) <- c("id","label","size")
+head(node_df)
+```
+
+```{r}
+sp <- sp[1:4,1:4]
+sp
+```
+
+```{r, warning=FALSE}
+# Data frame edge
+m1 <- melt(sp)[melt(upper.tri(sp))$value,] # FROM
+m2 <- melt(sp)[melt(lower.tri(sp))$value,] # TO
+m1 <- m1[order(m1$X1),]
+m2 <- m2[order(m2$X2),]
+```
+
+```{r}
+edge_df <- data.frame("to"=m1[,2],"from"=m1[,1], "weight" = m1$value-m2$value)
+library(dplyr)
+edge_df_positive <- edge_df %>% filter(weight >= 0)
+edge_df_negative <- edge_df %>% filter(weight < 0)
+
+edge_df_negative <- edge_df_negative %>%
+  mutate(weight = -weight) %>%
+  dplyr::rename(to = from, from = to)
+edge_df <- bind_rows(edge_df_positive, edge_df_negative)
+```
+
+```{r}
+positive_weight <- edge_df$weight[edge_df$weight > 0]
+negative_weight <- edge_df$weight[edge_df$weight < 0]
+positive_size <- node_df$size[node_df$size > 0]
+negative_size <- node_df$size[node_df$size < 0]
+
+library(RColorBrewer)
+Transmitter_color <- "#2ca25f"
+else_color <- "#de2d26"
+color_vec1 <- ifelse(edge_df$weight > 0, Transmitter_color, else_color)
+color_vec2 <- ifelse(node_df$size > 0, Transmitter_color, else_color)
+```
+
+```{r}
+graph <- graph_from_data_frame(edge_df, directed = TRUE, vertices = node_df)
+E(graph)$color <- "black" # Egde
+V(graph)$color <- color_vec2 # Node
+E(graph)$weight <- abs(edge_df$weight)
+V(graph)$size <- abs(node_df$size)
+```
+
+
+```{r}
+E(graph)$weight <- E(graph)$weight / max(E(graph)$weight) * 2
+V(graph)$size <- V(graph)$size / max(V(graph)$size) * 50
+```
+
+```{r}
+plot(graph, edge.width = E(graph)$weight, layout=layout_in_circle(graph), edge.arrow.mode=2, edge.arrow.size=0.2)
+```

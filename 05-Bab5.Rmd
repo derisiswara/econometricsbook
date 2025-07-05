@@ -1,0 +1,162 @@
+# Panel Data Regression
+
+```{r}
+library(readxl)
+datapanel = read_excel("Data/Bab 5/Data Panel.xlsx")
+head(datapanel)
+```
+
+## Static Panel Data
+
+```{r}
+library(plm)
+model1 = log(realgdp) ~ log(population) + log(investment) + log(hdi)
+```
+
+
+```{r}
+# time vs individual effect
+pFtest(model1, data = datapanel, effect = "time")
+pFtest(model1, data = datapanel, effect = "individual")
+pFtest(model1, data = datapanel, effect = "twoways")
+```
+
+### Pooled OLS
+
+```{r}
+POLS <- plm(model1, data = datapanel, 
+                      index = c("province", "year"), 
+                      effect = "twoways", model = "pooling")
+summary(POLS)
+```
+
+### Fixed Effects Model
+
+```{r}
+FEM <- plm(model1, data = datapanel, 
+                      index = c("province", "year"), 
+                      effect = "twoways", model = "within")
+
+summary(FEM)
+```
+
+
+```{r}
+# FEM vs. Pooled OLS
+pFtest(FEM, POLS)
+```
+
+### Random Effects Model
+
+
+```{r}
+REM <- plm(model1, data = datapanel, 
+                      index = c("province", "year"), 
+                      effect = "twoways", model = "random")
+summary(REM)
+```
+
+### Hausman Test
+```{r}
+phtest(FEM,REM)
+```
+
+### Model Diagnostics
+
+```{r}
+# Multicolinearity
+library(car)
+vif(POLS)
+cor(datapanel[,4:6])
+```
+
+```{r}
+library(lmtest)
+# Heteroscedasticity
+bptest(FEM) 
+# Autocorrelation
+pbgtest(FEM)
+```
+
+```{r}
+# Cluster Robust Standard Error
+library(sandwich)
+coeftest(FEM, vcovHC(FEM, type = "sss", cluster = "group"))
+```
+
+```{r}
+# HAC Robust Standard Error
+coeftest(FEM, vcovHC(FEM, method="arellano"))
+```
+
+## Dynamic Panel Data
+```{r}
+head(datapanel)
+```
+
+```{r}
+# lag(log(realgdp), 2:7) = Instrument
+modeldyn1 = log(realgdp) ~ lag(log(realgdp)) + log(population) + log(investment) + log(hdi) | lag(log(realgdp),2:7) 
+# Dynamic OLS and FEM
+modeldyn2 = log(realgdp) ~ lag(log(realgdp)) + log(population) + log(investment) + log(hdi)
+```
+
+### First Difference GMM
+
+```{r}
+fd.gmm = pgmm(modeldyn1, data = datapanel)
+summary(fd.gmm)
+```
+
+### System GMM
+
+```{r}
+sys.gmm = pgmm(modeldyn1, data = datapanel, transformation="ld")
+summary(sys.gmm)
+```
+
+### Model Diagnotics
+
+```{r}
+# FEM
+FEMdyn = plm(modeldyn2, data = datapanel, index=c("province","year"), model="within")
+summary(FEMdyn)
+# OLS
+OLSdyn = plm(modeldyn2, data = datapanel, index=c("province","year"), model="pooling")
+summary(OLSdyn)
+```
+
+FDGMM = 0.731 
+SysGMM = 0.968 
+FEM = 0.767 
+OLS = 0.986
+
+FEM < GMM < OLS
+Best Model: System GMM
+
+
+```{r}
+summary(sys.gmm)
+```
+
+### Speed of Adjustment
+
+
+```{r}
+alpha1 = sys.gmm$coef[1]
+1-alpha1
+```
+
+### Half Time
+
+```{r}
+log(0.5)/log(sys.gmm$coef[1])
+```
+
+### Short Run and Long Run Coefficients
+
+```{r}
+sys.gmm$coefficients[2] # Short Run Poppulation
+sys.gmm$coefficients[2] / (1-alpha1) # Long Run Poppulation
+```
+

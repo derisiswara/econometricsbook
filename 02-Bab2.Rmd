@@ -1,0 +1,76 @@
+# Basic Linear Regression
+## EDA
+```{r}
+library(readxl)
+data1 <- read_excel("Data/Bab 2/data1.xlsx")
+head(data1)
+```
+
+```{r}
+names(data1)[2] <- "Outstanding KPR"
+names(data1)[7] <- "Inflasi"
+names(data1)[8] <- "CreditRate"
+```
+
+```{r}
+data1baru = data1[,c(2,4,7,8,9)]
+tsData = ts(data1baru, start=c(2014,10), frequency=12)
+head(tsData,5)
+```
+```{r}
+# Exploration
+plot(tsData, type="l", main="Plot Data", xlab="Waktu")
+```
+```{r}
+# correlation
+round(cor(tsData),3)
+```
+```{r}
+# Descriptive
+summary(tsData)
+```
+## Ordinary Least Square (OLS)
+```{r}
+# OLS
+regresi1 = lm(LnKPR ~ LnPDB + Inflasi + CreditRate + LnJII + DFTV, data=data1)
+summary(regresi1)
+```
+
+## Diagnostic Gauss Markov
+
+```{r}
+# Normality, Linearity, Heteroscedasticity
+library(gvlma)
+gvlma(regresi1)
+```
+
+```{r}
+# Heteroscedasticity Test
+library(car)
+# White test
+ncvTest(regresi1)
+```
+
+
+```{r}
+# Autocorrelation Test
+library(lmtest)
+dwtest(regresi1)
+```
+
+```{r}
+# Assumption: No perfect multicollinearity
+vif(regresi1)
+```
+
+
+```{r}
+# Re-estimate Standard Error
+library(sandwich)
+# Account for heteroskedasticity
+coeftest(regresi1, vcov = vcovHC(regresi1, "HC1"))
+```
+```{r}
+# Account for heteroskedasticity and autocorrelation
+coeftest(regresi1, vcov = vcovHAC)
+```

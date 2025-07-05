@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 5 Panel Data Regression | Application of Econometric Models with RStudio</title>
+<meta name="author" content="Deri Siswara">
+<meta name="description" content="library(readxl) #&gt; Warning: package 'readxl' was built under R version 4.2.3 datapanel = read_excel(&quot;Data/Bab 5/Data Panel.xlsx&quot;) head(datapanel) #&gt; # A tibble: 6 × 6 #&gt;  province year realgdp...">
+<meta name="generator" content="bookdown 0.38 with bs4_book()">
+<meta property="og:title" content="Chapter 5 Panel Data Regression | Application of Econometric Models with RStudio">
+<meta property="og:type" content="book">
+<meta property="og:description" content="library(readxl) #&gt; Warning: package 'readxl' was built under R version 4.2.3 datapanel = read_excel(&quot;Data/Bab 5/Data Panel.xlsx&quot;) head(datapanel) #&gt; # A tibble: 6 × 6 #&gt;  province year realgdp...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 5 Panel Data Regression | Application of Econometric Models with RStudio">
+<meta name="twitter:description" content="library(readxl) #&gt; Warning: package 'readxl' was built under R version 4.2.3 datapanel = read_excel(&quot;Data/Bab 5/Data Panel.xlsx&quot;) head(datapanel) #&gt; # A tibble: 6 × 6 #&gt;  province year realgdp...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.7.0/transition.js"></script><script src="libs/bs3compat-0.7.0/tabs.js"></script><script src="libs/bs3compat-0.7.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Application of Econometric Models with RStudio</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">Welcome</a></li>
+<li><a class="" href="basics-of-r.html"><span class="header-section-number">1</span> Basics of R</a></li>
+<li><a class="" href="basic-linear-regression.html"><span class="header-section-number">2</span> Basic Linear Regression</a></li>
+<li><a class="" href="univariate-time-series.html"><span class="header-section-number">3</span> Univariate Time Series</a></li>
+<li><a class="" href="multivariate-time-series.html"><span class="header-section-number">4</span> Multivariate Time Series</a></li>
+<li><a class="active" href="panel-data-regression.html"><span class="header-section-number">5</span> Panel Data Regression</a></li>
+<li><a class="" href="spatial-regression.html"><span class="header-section-number">6</span> Spatial Regression</a></li>
+<li><a class="" href="time-series-spillover---gvar.html"><span class="header-section-number">7</span> Time Series Spillover - GVAR</a></li>
+<li><a class="" href="multivariate-garch.html"><span class="header-section-number">8</span> Multivariate GARCH</a></li>
+<li><a class="" href="nardl.html"><span class="header-section-number">9</span> NARDL</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/dekayzds/ds-econometrics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="panel-data-regression" class="section level1" number="5">
+<h1>
+<span class="header-section-number">5</span> Panel Data Regression<a class="anchor" aria-label="anchor" href="#panel-data-regression"><i class="fas fa-link"></i></a>
+</h1>
+<div class="sourceCode" id="cb145"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readxl.tidyverse.org">readxl</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'readxl' was built under R version 4.2.3</span></span>
+<span><span class="va">datapanel</span> <span class="op">=</span> <span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html">read_excel</a></span><span class="op">(</span><span class="st">"Data/Bab 5/Data Panel.xlsx"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">datapanel</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 6 × 6</span></span>
+<span><span class="co">#&gt;   province  year realgdp population investment   hdi</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 Aceh      2010 101545.    4523100       82.3  67.1</span></span>
+<span><span class="co">#&gt; 2 Aceh      2011 104874.    4619000      463.   67.4</span></span>
+<span><span class="co">#&gt; 3 Aceh      2012 108915.    4715100     1726.   67.8</span></span>
+<span><span class="co">#&gt; 4 Aceh      2013 111756.    4811100     4785.   68.3</span></span>
+<span><span class="co">#&gt; 5 Aceh      2014 113488.    4906800     5497.   68.8</span></span>
+<span><span class="co">#&gt; 6 Aceh      2015 112672.    5002000     4485.   69.4</span></span></code></pre></div>
+<div id="static-panel-data" class="section level2" number="5.1">
+<h2>
+<span class="header-section-number">5.1</span> Static Panel Data<a class="anchor" aria-label="anchor" href="#static-panel-data"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb146"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://cran.r-project.org/package=plm">plm</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'plm' was built under R version 4.2.3</span></span>
+<span><span class="va">model1</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">realgdp</span><span class="op">)</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">population</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">investment</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">hdi</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb147"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># time vs individual effect</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/plm/man/pFtest.html">pFtest</a></span><span class="op">(</span><span class="va">model1</span>, data <span class="op">=</span> <span class="va">datapanel</span>, effect <span class="op">=</span> <span class="st">"time"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  F test for time effects</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; data:  model1</span></span>
+<span><span class="co">#&gt; F = 3.1305, df1 = 6, df2 = 221, p-value = 0.005777</span></span>
+<span><span class="co">#&gt; alternative hypothesis: significant effects</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/plm/man/pFtest.html">pFtest</a></span><span class="op">(</span><span class="va">model1</span>, data <span class="op">=</span> <span class="va">datapanel</span>, effect <span class="op">=</span> <span class="st">"individual"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  F test for individual effects</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; data:  model1</span></span>
+<span><span class="co">#&gt; F = 824.45, df1 = 32, df2 = 195, p-value &lt; 2.2e-16</span></span>
+<span><span class="co">#&gt; alternative hypothesis: significant effects</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/plm/man/pFtest.html">pFtest</a></span><span class="op">(</span><span class="va">model1</span>, data <span class="op">=</span> <span class="va">datapanel</span>, effect <span class="op">=</span> <span class="st">"twoways"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  F test for twoways effects</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; data:  model1</span></span>
+<span><span class="co">#&gt; F = 812.75, df1 = 38, df2 = 189, p-value &lt; 2.2e-16</span></span>
+<span><span class="co">#&gt; alternative hypothesis: significant effects</span></span></code></pre></div>
+<div id="pooled-ols" class="section level3" number="5.1.1">
+<h3>
+<span class="header-section-number">5.1.1</span> Pooled OLS<a class="anchor" aria-label="anchor" href="#pooled-ols"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb148"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">POLS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/plm/man/plm.html">plm</a></span><span class="op">(</span><span class="va">model1</span>, data <span class="op">=</span> <span class="va">datapanel</span>, </span>
+<span>                      index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"province"</span>, <span class="st">"year"</span><span class="op">)</span>, </span>
+<span>                      effect <span class="op">=</span> <span class="st">"twoways"</span>, model <span class="op">=</span> <span class="st">"pooling"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/urca/man/summary-methods.html">summary</a></span><span class="op">(</span><span class="va">POLS</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Pooling Model</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; plm(formula = model1, data = datapanel, effect = "twoways", model = "pooling", </span></span>
+<span><span class="co">#&gt;     index = c("province", "year"))</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Balanced Panel: n = 33, T = 7, N = 231</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Residuals:</span></span>
+<span><span class="co">#&gt;      Min.   1st Qu.    Median   3rd Qu.      Max. </span></span>
+<span><span class="co">#&gt; -0.802950 -0.288399 -0.071922  0.204733  1.211596 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;                   Estimate Std. Error t-value  Pr(&gt;|t|)    </span></span>
+<span><span class="co">#&gt; (Intercept)     -14.998414   1.789923 -8.3794 5.578e-15 ***</span></span>
+<span><span class="co">#&gt; log(population)   0.761682   0.034219 22.2592 &lt; 2.2e-16 ***</span></span>
+<span><span class="co">#&gt; log(investment)   0.200796   0.018761 10.7031 &lt; 2.2e-16 ***</span></span>
+<span><span class="co">#&gt; log(hdi)          3.187128   0.432136  7.3753 3.050e-12 ***</span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  </span></span>
+<span><span class="co">#&gt; 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Total Sum of Squares:    316.63</span></span>
+<span><span class="co">#&gt; Residual Sum of Squares: 37.477</span></span>
+<span><span class="co">#&gt; R-Squared:      0.88164</span></span>
+<span><span class="co">#&gt; Adj. R-Squared: 0.88008</span></span>
+<span><span class="co">#&gt; F-statistic: 563.624 on 3 and 227 DF, p-value: &lt; 2.22e-16</span></span></code></pre></div>
+</div>
+<div id="fixed-effects-model" class="section level3" number="5.1.2">
+<h3>
+<span class="header-section-number">5.1.2</span> Fixed Effects Model<a class="anchor" aria-label="anchor" href="#fixed-effects-model"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb149"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">FEM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/plm/man/plm.html">plm</a></span><span class="op">(</span><span class="va">model1</span>, data <span class="op">=</span> <span class="va">datapanel</span>, </span>
+<span>                      index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"province"</span>, <span class="st">"year"</span><span class="op">)</span>, </span>
+<span>                      effect <span class="op">=</span> <span class="st">"twoways"</span>, model <span class="op">=</span> <span class="st">"within"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/urca/man/summary-methods.html">summary</a></span><span class="op">(</span><span class="va">FEM</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Twoways effects Within Model</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; plm(formula = model1, data = datapanel, effect = "twoways", model = "within", </span></span>
+<span><span class="co">#&gt;     index = c("province", "year"))</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Balanced Panel: n = 33, T = 7, N = 231</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Residuals:</span></span>
+<span><span class="co">#&gt;       Min.    1st Qu.     Median    3rd Qu.       Max. </span></span>
+<span><span class="co">#&gt; -0.1065933 -0.0108718  0.0010591  0.0107126  0.1302578 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;                   Estimate Std. Error t-value Pr(&gt;|t|)  </span></span>
+<span><span class="co">#&gt; log(population) -0.4403249  0.2194092 -2.0069  0.04619 *</span></span>
+<span><span class="co">#&gt; log(investment) -0.0046652  0.0039298 -1.1871  0.23666  </span></span>
+<span><span class="co">#&gt; log(hdi)         1.4472500  0.7092888  2.0404  0.04270 *</span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  </span></span>
+<span><span class="co">#&gt; 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Total Sum of Squares:    0.24452</span></span>
+<span><span class="co">#&gt; Residual Sum of Squares: 0.22795</span></span>
+<span><span class="co">#&gt; R-Squared:      0.067783</span></span>
+<span><span class="co">#&gt; Adj. R-Squared: -0.13444</span></span>
+<span><span class="co">#&gt; F-statistic: 4.58081 on 3 and 189 DF, p-value: 0.0040297</span></span></code></pre></div>
+<div class="sourceCode" id="cb150"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># FEM vs. Pooled OLS</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/plm/man/pFtest.html">pFtest</a></span><span class="op">(</span><span class="va">FEM</span>, <span class="va">POLS</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  F test for twoways effects</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; data:  model1</span></span>
+<span><span class="co">#&gt; F = 812.75, df1 = 38, df2 = 189, p-value &lt; 2.2e-16</span></span>
+<span><span class="co">#&gt; alternative hypothesis: significant effects</span></span></code></pre></div>
+</div>
+<div id="random-effects-model" class="section level3" number="5.1.3">
+<h3>
+<span class="header-section-number">5.1.3</span> Random Effects Model<a class="anchor" aria-label="anchor" href="#random-effects-model"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb151"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">REM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/plm/man/plm.html">plm</a></span><span class="op">(</span><span class="va">model1</span>, data <span class="op">=</span> <span class="va">datapanel</span>, </span>
+<span>                      index <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"province"</span>, <span class="st">"year"</span><span class="op">)</span>, </span>
+<span>                      effect <span class="op">=</span> <span class="st">"twoways"</span>, model <span class="op">=</span> <span class="st">"random"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/urca/man/summary-methods.html">summary</a></span><span class="op">(</span><span class="va">REM</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Twoways effects Random Effect Model </span></span>
+<span><span class="co">#&gt;    (Swamy-Arora's transformation)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; plm(formula = model1, data = datapanel, effect = "twoways", model = "random", </span></span>
+<span><span class="co">#&gt;     index = c("province", "year"))</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Balanced Panel: n = 33, T = 7, N = 231</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Effects:</span></span>
+<span><span class="co">#&gt;                    var  std.dev share</span></span>
+<span><span class="co">#&gt; idiosyncratic 0.001206 0.034728 0.008</span></span>
+<span><span class="co">#&gt; individual    0.141041 0.375555 0.992</span></span>
+<span><span class="co">#&gt; time          0.000000 0.000000 0.000</span></span>
+<span><span class="co">#&gt; theta: 0.9651 (id) 0 (time) 0 (total)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Residuals:</span></span>
+<span><span class="co">#&gt;       Min.    1st Qu.     Median    3rd Qu.       Max. </span></span>
+<span><span class="co">#&gt; -0.1099833 -0.0205049  0.0012902  0.0165381  0.1635731 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;                    Estimate  Std. Error z-value Pr(&gt;|z|)</span></span>
+<span><span class="co">#&gt; (Intercept)     -2.1127e+01  1.0047e+00 -21.029   &lt;2e-16</span></span>
+<span><span class="co">#&gt; log(population)  8.9072e-01  7.1716e-02  12.420   &lt;2e-16</span></span>
+<span><span class="co">#&gt; log(investment)  9.0107e-04  4.1329e-03   0.218   0.8274</span></span>
+<span><span class="co">#&gt; log(hdi)         4.5687e+00  2.2971e-01  19.889   &lt;2e-16</span></span>
+<span><span class="co">#&gt;                    </span></span>
+<span><span class="co">#&gt; (Intercept)     ***</span></span>
+<span><span class="co">#&gt; log(population) ***</span></span>
+<span><span class="co">#&gt; log(investment)    </span></span>
+<span><span class="co">#&gt; log(hdi)        ***</span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  </span></span>
+<span><span class="co">#&gt; 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Total Sum of Squares:    3.599</span></span>
+<span><span class="co">#&gt; Residual Sum of Squares: 0.35333</span></span>
+<span><span class="co">#&gt; R-Squared:      0.90183</span></span>
+<span><span class="co">#&gt; Adj. R-Squared: 0.90053</span></span>
+<span><span class="co">#&gt; Chisq: 2085.22 on 3 DF, p-value: &lt; 2.22e-16</span></span></code></pre></div>
+</div>
+<div id="hausman-test" class="section level3" number="5.1.4">
+<h3>
+<span class="header-section-number">5.1.4</span> Hausman Test<a class="anchor" aria-label="anchor" href="#hausman-test"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb152"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/plm/man/phtest.html">phtest</a></span><span class="op">(</span><span class="va">FEM</span>,<span class="va">REM</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Hausman Test</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; data:  model1</span></span>
+<span><span class="co">#&gt; chisq = 46.609, df = 3, p-value = 4.208e-10</span></span>
+<span><span class="co">#&gt; alternative hypothesis: one model is inconsistent</span></span></code></pre></div>
+</div>
+<div id="model-diagnostics" class="section level3" number="5.1.5">
+<h3>
+<span class="header-section-number">5.1.5</span> Model Diagnostics<a class="anchor" aria-label="anchor" href="#model-diagnostics"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb153"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Multicolinearity</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-forge.r-project.org/projects/car/">car</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'car' was built under R version 4.2.3</span></span>
+<span><span class="co">#&gt; Loading required package: carData</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/car/man/vif.html">vif</a></span><span class="op">(</span><span class="va">POLS</span><span class="op">)</span></span>
+<span><span class="co">#&gt; log(population) log(investment)        log(hdi) </span></span>
+<span><span class="co">#&gt;        1.596289        1.641147        1.119590</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">datapanel</span><span class="op">[</span>,<span class="fl">4</span><span class="op">:</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt;            population investment       hdi</span></span>
+<span><span class="co">#&gt; population  1.0000000  0.7052198 0.1212988</span></span>
+<span><span class="co">#&gt; investment  0.7052198  1.0000000 0.3222325</span></span>
+<span><span class="co">#&gt; hdi         0.1212988  0.3222325 1.0000000</span></span></code></pre></div>
+<div class="sourceCode" id="cb154"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">lmtest</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: zoo</span></span>
+<span><span class="co">#&gt; Warning: package 'zoo' was built under R version 4.2.3</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'zoo'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     as.Date, as.Date.numeric</span></span>
+<span><span class="co"># Heteroscedasticity</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/bptest.html">bptest</a></span><span class="op">(</span><span class="va">FEM</span><span class="op">)</span> </span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  studentized Breusch-Pagan test</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; data:  FEM</span></span>
+<span><span class="co">#&gt; BP = 32.396, df = 3, p-value = 4.319e-07</span></span>
+<span><span class="co"># Autocorrelation</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/plm/man/pbgtest.html">pbgtest</a></span><span class="op">(</span><span class="va">FEM</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Breusch-Godfrey/Wooldridge test for serial</span></span>
+<span><span class="co">#&gt;  correlation in panel models</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; data:  model1</span></span>
+<span><span class="co">#&gt; chisq = 84.76, df = 7, p-value = 1.468e-15</span></span>
+<span><span class="co">#&gt; alternative hypothesis: serial correlation in idiosyncratic errors</span></span></code></pre></div>
+<div class="sourceCode" id="cb155"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Cluster Robust Standard Error</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://sandwich.R-Forge.R-project.org/">sandwich</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'sandwich' was built under R version 4.2.3</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html">coeftest</a></span><span class="op">(</span><span class="va">FEM</span>, <span class="fu"><a href="https://sandwich.R-Forge.R-project.org/reference/vcovHC.html">vcovHC</a></span><span class="op">(</span><span class="va">FEM</span>, type <span class="op">=</span> <span class="st">"sss"</span>, cluster <span class="op">=</span> <span class="st">"group"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; t test of coefficients:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;                   Estimate Std. Error t value Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; log(population) -0.4403249  0.4093013 -1.0758   0.2834</span></span>
+<span><span class="co">#&gt; log(investment) -0.0046652  0.0056843 -0.8207   0.4128</span></span>
+<span><span class="co">#&gt; log(hdi)         1.4472500  1.0807171  1.3392   0.1821</span></span></code></pre></div>
+<div class="sourceCode" id="cb156"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># HAC Robust Standard Error</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/lmtest/man/coeftest.html">coeftest</a></span><span class="op">(</span><span class="va">FEM</span>, <span class="fu"><a href="https://sandwich.R-Forge.R-project.org/reference/vcovHC.html">vcovHC</a></span><span class="op">(</span><span class="va">FEM</span>, method<span class="op">=</span><span class="st">"arellano"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; t test of coefficients:</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;                   Estimate Std. Error t value Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; log(population) -0.4403249  0.4012959 -1.0973   0.2739</span></span>
+<span><span class="co">#&gt; log(investment) -0.0046652  0.0055732 -0.8371   0.4036</span></span>
+<span><span class="co">#&gt; log(hdi)         1.4472500  1.0595795  1.3659   0.1736</span></span></code></pre></div>
+</div>
+</div>
+<div id="dynamic-panel-data" class="section level2" number="5.2">
+<h2>
+<span class="header-section-number">5.2</span> Dynamic Panel Data<a class="anchor" aria-label="anchor" href="#dynamic-panel-data"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb157"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">datapanel</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # A tibble: 6 × 6</span></span>
+<span><span class="co">#&gt;   province  year realgdp population investment   hdi</span></span>
+<span><span class="co">#&gt;   &lt;chr&gt;    &lt;dbl&gt;   &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt;</span></span>
+<span><span class="co">#&gt; 1 Aceh      2010 101545.    4523100       82.3  67.1</span></span>
+<span><span class="co">#&gt; 2 Aceh      2011 104874.    4619000      463.   67.4</span></span>
+<span><span class="co">#&gt; 3 Aceh      2012 108915.    4715100     1726.   67.8</span></span>
+<span><span class="co">#&gt; 4 Aceh      2013 111756.    4811100     4785.   68.3</span></span>
+<span><span class="co">#&gt; 5 Aceh      2014 113488.    4906800     5497.   68.8</span></span>
+<span><span class="co">#&gt; 6 Aceh      2015 112672.    5002000     4485.   69.4</span></span></code></pre></div>
+<div class="sourceCode" id="cb158"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># lag(log(realgdp), 2:7) = Instrument</span></span>
+<span><span class="va">modeldyn1</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">realgdp</span><span class="op">)</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/stats/lag.html">lag</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">realgdp</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">population</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">investment</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">hdi</span><span class="op">)</span> <span class="op">|</span> <span class="fu"><a href="https://rdrr.io/r/stats/lag.html">lag</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">realgdp</span><span class="op">)</span>,<span class="fl">2</span><span class="op">:</span><span class="fl">7</span><span class="op">)</span> </span>
+<span><span class="co"># Dynamic OLS and FEM</span></span>
+<span><span class="va">modeldyn2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">realgdp</span><span class="op">)</span> <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/stats/lag.html">lag</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">realgdp</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">population</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">investment</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">hdi</span><span class="op">)</span></span></code></pre></div>
+<div id="first-difference-gmm" class="section level3" number="5.2.1">
+<h3>
+<span class="header-section-number">5.2.1</span> First Difference GMM<a class="anchor" aria-label="anchor" href="#first-difference-gmm"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb159"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fd.gmm</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/plm/man/pgmm.html">pgmm</a></span><span class="op">(</span><span class="va">modeldyn1</span>, data <span class="op">=</span> <span class="va">datapanel</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in pgmm(modeldyn1, data = datapanel): the</span></span>
+<span><span class="co">#&gt; second-step matrix is singular, a general inverse is used</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/urca/man/summary-methods.html">summary</a></span><span class="op">(</span><span class="va">fd.gmm</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in vcovHC.pgmm(object): a general inverse is used</span></span>
+<span><span class="co">#&gt; Twoways effects One-step model Difference GMM </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; pgmm(formula = modeldyn1, data = datapanel)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Balanced Panel: n = 33, T = 7, N = 231</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Number of Observations Used: 165</span></span>
+<span><span class="co">#&gt; Residuals:</span></span>
+<span><span class="co">#&gt;       Min.    1st Qu.     Median       Mean    3rd Qu. </span></span>
+<span><span class="co">#&gt; -0.0926516 -0.0071905 -0.0006685  0.0000000  0.0051944 </span></span>
+<span><span class="co">#&gt;       Max. </span></span>
+<span><span class="co">#&gt;  0.1291078 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;                     Estimate Std. Error z-value  Pr(&gt;|z|)</span></span>
+<span><span class="co">#&gt; lag(log(realgdp))  0.7312958  0.2057587  3.5541 0.0003792</span></span>
+<span><span class="co">#&gt; log(population)   -0.1750407  0.1798151 -0.9734 0.3303305</span></span>
+<span><span class="co">#&gt; log(investment)    0.0013969  0.0022465  0.6218 0.5340580</span></span>
+<span><span class="co">#&gt; log(hdi)           2.1197608  1.3035307  1.6262 0.1039138</span></span>
+<span><span class="co">#&gt;                      </span></span>
+<span><span class="co">#&gt; lag(log(realgdp)) ***</span></span>
+<span><span class="co">#&gt; log(population)      </span></span>
+<span><span class="co">#&gt; log(investment)      </span></span>
+<span><span class="co">#&gt; log(hdi)             </span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  </span></span>
+<span><span class="co">#&gt; 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Sargan test: chisq(14) = 25.4339 (p-value = 0.030518)</span></span>
+<span><span class="co">#&gt; Autocorrelation test (1): normal = -1.836971 (p-value = 0.066214)</span></span>
+<span><span class="co">#&gt; Autocorrelation test (2): normal = 1.555262 (p-value = 0.11988)</span></span>
+<span><span class="co">#&gt; Wald test for coefficients: chisq(4) = 95.86467 (p-value = &lt; 2.22e-16)</span></span>
+<span><span class="co">#&gt; Wald test for time dummies: chisq(5) = 8.364699 (p-value = 0.13725)</span></span></code></pre></div>
+</div>
+<div id="system-gmm" class="section level3" number="5.2.2">
+<h3>
+<span class="header-section-number">5.2.2</span> System GMM<a class="anchor" aria-label="anchor" href="#system-gmm"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb160"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sys.gmm</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/plm/man/pgmm.html">pgmm</a></span><span class="op">(</span><span class="va">modeldyn1</span>, data <span class="op">=</span> <span class="va">datapanel</span>, transformation<span class="op">=</span><span class="st">"ld"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in pgmm(modeldyn1, data = datapanel, transformation</span></span>
+<span><span class="co">#&gt; = "ld"): the second-step matrix is singular, a general</span></span>
+<span><span class="co">#&gt; inverse is used</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/urca/man/summary-methods.html">summary</a></span><span class="op">(</span><span class="va">sys.gmm</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in vcovHC.pgmm(object): a general inverse is used</span></span>
+<span><span class="co">#&gt; Twoways effects One-step model System GMM </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; pgmm(formula = modeldyn1, data = datapanel, transformation = "ld")</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Balanced Panel: n = 33, T = 7, N = 231</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Number of Observations Used: 363</span></span>
+<span><span class="co">#&gt; Residuals:</span></span>
+<span><span class="co">#&gt;       Min.    1st Qu.     Median       Mean    3rd Qu. </span></span>
+<span><span class="co">#&gt; -0.1198240 -0.0083907  0.0001403  0.0000000  0.0065018 </span></span>
+<span><span class="co">#&gt;       Max. </span></span>
+<span><span class="co">#&gt;  0.1402918 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;                    Estimate Std. Error z-value  Pr(&gt;|z|)</span></span>
+<span><span class="co">#&gt; lag(log(realgdp)) 0.9686425  0.0107842 89.8208 &lt; 2.2e-16</span></span>
+<span><span class="co">#&gt; log(population)   0.0207419  0.0078302  2.6490  0.008074</span></span>
+<span><span class="co">#&gt; log(investment)   0.0070513  0.0029150  2.4190  0.015565</span></span>
+<span><span class="co">#&gt; log(hdi)          0.1144280  0.0582058  1.9659  0.049308</span></span>
+<span><span class="co">#&gt;                      </span></span>
+<span><span class="co">#&gt; lag(log(realgdp)) ***</span></span>
+<span><span class="co">#&gt; log(population)   ** </span></span>
+<span><span class="co">#&gt; log(investment)   *  </span></span>
+<span><span class="co">#&gt; log(hdi)          *  </span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  </span></span>
+<span><span class="co">#&gt; 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Sargan test: chisq(22) = 23.67029 (p-value = 0.36475)</span></span>
+<span><span class="co">#&gt; Autocorrelation test (1): normal = -1.663193 (p-value = 0.096274)</span></span>
+<span><span class="co">#&gt; Autocorrelation test (2): normal = 1.368565 (p-value = 0.17114)</span></span>
+<span><span class="co">#&gt; Wald test for coefficients: chisq(4) = 314880.1 (p-value = &lt; 2.22e-16)</span></span>
+<span><span class="co">#&gt; Wald test for time dummies: chisq(5) = 29.57621 (p-value = 1.7869e-05)</span></span></code></pre></div>
+</div>
+<div id="model-diagnotics" class="section level3" number="5.2.3">
+<h3>
+<span class="header-section-number">5.2.3</span> Model Diagnotics<a class="anchor" aria-label="anchor" href="#model-diagnotics"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb161"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># FEM</span></span>
+<span><span class="va">FEMdyn</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/plm/man/plm.html">plm</a></span><span class="op">(</span><span class="va">modeldyn2</span>, data <span class="op">=</span> <span class="va">datapanel</span>, index<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"province"</span>,<span class="st">"year"</span><span class="op">)</span>, model<span class="op">=</span><span class="st">"within"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/urca/man/summary-methods.html">summary</a></span><span class="op">(</span><span class="va">FEMdyn</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Oneway (individual) effect Within Model</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; plm(formula = modeldyn2, data = datapanel, model = "within", </span></span>
+<span><span class="co">#&gt;     index = c("province", "year"))</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Balanced Panel: n = 33, T = 6, N = 198</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Residuals:</span></span>
+<span><span class="co">#&gt;        Min.     1st Qu.      Median     3rd Qu.        Max. </span></span>
+<span><span class="co">#&gt; -5.8397e-02 -6.5483e-03  1.4102e-05  5.9536e-03  1.1759e-01 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;                     Estimate Std. Error t-value  Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; lag(log(realgdp))  0.7670629  0.0397433 19.3004 &lt; 2.2e-16</span></span>
+<span><span class="co">#&gt; log(population)   -0.2488432  0.1100829 -2.2605   0.02513</span></span>
+<span><span class="co">#&gt; log(investment)   -0.0014210  0.0024243 -0.5861   0.55862</span></span>
+<span><span class="co">#&gt; log(hdi)           1.8786968  0.2913007  6.4493 1.253e-09</span></span>
+<span><span class="co">#&gt;                      </span></span>
+<span><span class="co">#&gt; lag(log(realgdp)) ***</span></span>
+<span><span class="co">#&gt; log(population)   *  </span></span>
+<span><span class="co">#&gt; log(investment)      </span></span>
+<span><span class="co">#&gt; log(hdi)          ***</span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  </span></span>
+<span><span class="co">#&gt; 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Total Sum of Squares:    1.9728</span></span>
+<span><span class="co">#&gt; Residual Sum of Squares: 0.050149</span></span>
+<span><span class="co">#&gt; R-Squared:      0.97458</span></span>
+<span><span class="co">#&gt; Adj. R-Squared: 0.96889</span></span>
+<span><span class="co">#&gt; F-statistic: 1543.1 on 4 and 161 DF, p-value: &lt; 2.22e-16</span></span>
+<span><span class="co"># OLS</span></span>
+<span><span class="va">OLSdyn</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/plm/man/plm.html">plm</a></span><span class="op">(</span><span class="va">modeldyn2</span>, data <span class="op">=</span> <span class="va">datapanel</span>, index<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"province"</span>,<span class="st">"year"</span><span class="op">)</span>, model<span class="op">=</span><span class="st">"pooling"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/urca/man/summary-methods.html">summary</a></span><span class="op">(</span><span class="va">OLSdyn</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Pooling Model</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; plm(formula = modeldyn2, data = datapanel, model = "pooling", </span></span>
+<span><span class="co">#&gt;     index = c("province", "year"))</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Balanced Panel: n = 33, T = 6, N = 198</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Residuals:</span></span>
+<span><span class="co">#&gt;        Min.     1st Qu.      Median     3rd Qu.        Max. </span></span>
+<span><span class="co">#&gt; -0.10036444 -0.00975944 -0.00044271  0.00946369  0.12897120 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;                     Estimate Std. Error  t-value Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; (Intercept)       -0.1070843  0.1261711  -0.8487  0.39709</span></span>
+<span><span class="co">#&gt; lag(log(realgdp))  0.9868710  0.0041424 238.2382  &lt; 2e-16</span></span>
+<span><span class="co">#&gt; log(population)    0.0088980  0.0036806   2.4175  0.01656</span></span>
+<span><span class="co">#&gt; log(investment)    0.0016145  0.0016016   1.0080  0.31470</span></span>
+<span><span class="co">#&gt; log(hdi)           0.0397307  0.0297085   1.3374  0.18268</span></span>
+<span><span class="co">#&gt;                      </span></span>
+<span><span class="co">#&gt; (Intercept)          </span></span>
+<span><span class="co">#&gt; lag(log(realgdp)) ***</span></span>
+<span><span class="co">#&gt; log(population)   *  </span></span>
+<span><span class="co">#&gt; log(investment)      </span></span>
+<span><span class="co">#&gt; log(hdi)             </span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  </span></span>
+<span><span class="co">#&gt; 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Total Sum of Squares:    269.87</span></span>
+<span><span class="co">#&gt; Residual Sum of Squares: 0.09922</span></span>
+<span><span class="co">#&gt; R-Squared:      0.99963</span></span>
+<span><span class="co">#&gt; Adj. R-Squared: 0.99962</span></span>
+<span><span class="co">#&gt; F-statistic: 131187 on 4 and 193 DF, p-value: &lt; 2.22e-16</span></span></code></pre></div>
+<p>FDGMM = 0.731
+SysGMM = 0.968
+FEM = 0.767
+OLS = 0.986</p>
+<p>FEM &lt; GMM &lt; OLS
+Best Model: System GMM</p>
+<div class="sourceCode" id="cb162"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/urca/man/summary-methods.html">summary</a></span><span class="op">(</span><span class="va">sys.gmm</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in vcovHC.pgmm(object): a general inverse is used</span></span>
+<span><span class="co">#&gt; Twoways effects One-step model System GMM </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; pgmm(formula = modeldyn1, data = datapanel, transformation = "ld")</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Balanced Panel: n = 33, T = 7, N = 231</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Number of Observations Used: 363</span></span>
+<span><span class="co">#&gt; Residuals:</span></span>
+<span><span class="co">#&gt;       Min.    1st Qu.     Median       Mean    3rd Qu. </span></span>
+<span><span class="co">#&gt; -0.1198240 -0.0083907  0.0001403  0.0000000  0.0065018 </span></span>
+<span><span class="co">#&gt;       Max. </span></span>
+<span><span class="co">#&gt;  0.1402918 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Coefficients:</span></span>
+<span><span class="co">#&gt;                    Estimate Std. Error z-value  Pr(&gt;|z|)</span></span>
+<span><span class="co">#&gt; lag(log(realgdp)) 0.9686425  0.0107842 89.8208 &lt; 2.2e-16</span></span>
+<span><span class="co">#&gt; log(population)   0.0207419  0.0078302  2.6490  0.008074</span></span>
+<span><span class="co">#&gt; log(investment)   0.0070513  0.0029150  2.4190  0.015565</span></span>
+<span><span class="co">#&gt; log(hdi)          0.1144280  0.0582058  1.9659  0.049308</span></span>
+<span><span class="co">#&gt;                      </span></span>
+<span><span class="co">#&gt; lag(log(realgdp)) ***</span></span>
+<span><span class="co">#&gt; log(population)   ** </span></span>
+<span><span class="co">#&gt; log(investment)   *  </span></span>
+<span><span class="co">#&gt; log(hdi)          *  </span></span>
+<span><span class="co">#&gt; ---</span></span>
+<span><span class="co">#&gt; Signif. codes:  </span></span>
+<span><span class="co">#&gt; 0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Sargan test: chisq(22) = 23.67029 (p-value = 0.36475)</span></span>
+<span><span class="co">#&gt; Autocorrelation test (1): normal = -1.663193 (p-value = 0.096274)</span></span>
+<span><span class="co">#&gt; Autocorrelation test (2): normal = 1.368565 (p-value = 0.17114)</span></span>
+<span><span class="co">#&gt; Wald test for coefficients: chisq(4) = 314880.1 (p-value = &lt; 2.22e-16)</span></span>
+<span><span class="co">#&gt; Wald test for time dummies: chisq(5) = 29.57621 (p-value = 1.7869e-05)</span></span></code></pre></div>
+</div>
+<div id="speed-of-adjustment" class="section level3" number="5.2.4">
+<h3>
+<span class="header-section-number">5.2.4</span> Speed of Adjustment<a class="anchor" aria-label="anchor" href="#speed-of-adjustment"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb163"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">alpha1</span> <span class="op">=</span> <span class="va">sys.gmm</span><span class="op">$</span><span class="va">coef</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span></span>
+<span><span class="fl">1</span><span class="op">-</span><span class="va">alpha1</span></span>
+<span><span class="co">#&gt; lag(log(realgdp)) </span></span>
+<span><span class="co">#&gt;        0.03135749</span></span></code></pre></div>
+</div>
+<div id="half-time" class="section level3" number="5.2.5">
+<h3>
+<span class="header-section-number">5.2.5</span> Half Time<a class="anchor" aria-label="anchor" href="#half-time"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb164"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="fl">0.5</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="va">sys.gmm</span><span class="op">$</span><span class="va">coef</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
+<span><span class="co">#&gt; lag(log(realgdp)) </span></span>
+<span><span class="co">#&gt;          21.75626</span></span></code></pre></div>
+</div>
+<div id="short-run-and-long-run-coefficients" class="section level3" number="5.2.6">
+<h3>
+<span class="header-section-number">5.2.6</span> Short Run and Long Run Coefficients<a class="anchor" aria-label="anchor" href="#short-run-and-long-run-coefficients"><i class="fas fa-link"></i></a>
+</h3>
+<div class="sourceCode" id="cb165"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sys.gmm</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="co"># Short Run Poppulation</span></span>
+<span><span class="co">#&gt; log(population) </span></span>
+<span><span class="co">#&gt;      0.02074192</span></span>
+<span><span class="va">sys.gmm</span><span class="op">$</span><span class="va">coefficients</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">/</span> <span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">alpha1</span><span class="op">)</span> <span class="co"># Long Run Poppulation</span></span>
+<span><span class="co">#&gt; log(population) </span></span>
+<span><span class="co">#&gt;       0.6614661</span></span></code></pre></div>
+
+</div>
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="multivariate-time-series.html"><span class="header-section-number">4</span> Multivariate Time Series</a></div>
+<div class="next"><a href="spatial-regression.html"><span class="header-section-number">6</span> Spatial Regression</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#panel-data-regression"><span class="header-section-number">5</span> Panel Data Regression</a></li>
+<li>
+<a class="nav-link" href="#static-panel-data"><span class="header-section-number">5.1</span> Static Panel Data</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#pooled-ols"><span class="header-section-number">5.1.1</span> Pooled OLS</a></li>
+<li><a class="nav-link" href="#fixed-effects-model"><span class="header-section-number">5.1.2</span> Fixed Effects Model</a></li>
+<li><a class="nav-link" href="#random-effects-model"><span class="header-section-number">5.1.3</span> Random Effects Model</a></li>
+<li><a class="nav-link" href="#hausman-test"><span class="header-section-number">5.1.4</span> Hausman Test</a></li>
+<li><a class="nav-link" href="#model-diagnostics"><span class="header-section-number">5.1.5</span> Model Diagnostics</a></li>
+</ul>
+</li>
+<li>
+<a class="nav-link" href="#dynamic-panel-data"><span class="header-section-number">5.2</span> Dynamic Panel Data</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#first-difference-gmm"><span class="header-section-number">5.2.1</span> First Difference GMM</a></li>
+<li><a class="nav-link" href="#system-gmm"><span class="header-section-number">5.2.2</span> System GMM</a></li>
+<li><a class="nav-link" href="#model-diagnotics"><span class="header-section-number">5.2.3</span> Model Diagnotics</a></li>
+<li><a class="nav-link" href="#speed-of-adjustment"><span class="header-section-number">5.2.4</span> Speed of Adjustment</a></li>
+<li><a class="nav-link" href="#half-time"><span class="header-section-number">5.2.5</span> Half Time</a></li>
+<li><a class="nav-link" href="#short-run-and-long-run-coefficients"><span class="header-section-number">5.2.6</span> Short Run and Long Run Coefficients</a></li>
+</ul>
+</li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/dekayzds/ds-econometrics/blob/master/05-Bab5.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/dekayzds/ds-econometrics/edit/master/05-Bab5.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Application of Econometric Models with RStudio</strong>" was written by Deri Siswara. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

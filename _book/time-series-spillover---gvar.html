@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 7 Time Series Spillover - GVAR | Application of Econometric Models with RStudio</title>
+<meta name="author" content="Deri Siswara">
+<meta name="description" content="7.1 Library library(Spillover) #&gt; Loading required package: vars #&gt; Loading required package: MASS #&gt; Loading required package: strucchange #&gt; Loading required package: zoo #&gt; #&gt; Attaching...">
+<meta name="generator" content="bookdown 0.38 with bs4_book()">
+<meta property="og:title" content="Chapter 7 Time Series Spillover - GVAR | Application of Econometric Models with RStudio">
+<meta property="og:type" content="book">
+<meta property="og:description" content="7.1 Library library(Spillover) #&gt; Loading required package: vars #&gt; Loading required package: MASS #&gt; Loading required package: strucchange #&gt; Loading required package: zoo #&gt; #&gt; Attaching...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 7 Time Series Spillover - GVAR | Application of Econometric Models with RStudio">
+<meta name="twitter:description" content="7.1 Library library(Spillover) #&gt; Loading required package: vars #&gt; Loading required package: MASS #&gt; Loading required package: strucchange #&gt; Loading required package: zoo #&gt; #&gt; Attaching...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.7.0/transition.js"></script><script src="libs/bs3compat-0.7.0/tabs.js"></script><script src="libs/bs3compat-0.7.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Application of Econometric Models with RStudio</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">Welcome</a></li>
+<li><a class="" href="basics-of-r.html"><span class="header-section-number">1</span> Basics of R</a></li>
+<li><a class="" href="basic-linear-regression.html"><span class="header-section-number">2</span> Basic Linear Regression</a></li>
+<li><a class="" href="univariate-time-series.html"><span class="header-section-number">3</span> Univariate Time Series</a></li>
+<li><a class="" href="multivariate-time-series.html"><span class="header-section-number">4</span> Multivariate Time Series</a></li>
+<li><a class="" href="panel-data-regression.html"><span class="header-section-number">5</span> Panel Data Regression</a></li>
+<li><a class="" href="spatial-regression.html"><span class="header-section-number">6</span> Spatial Regression</a></li>
+<li><a class="active" href="time-series-spillover---gvar.html"><span class="header-section-number">7</span> Time Series Spillover - GVAR</a></li>
+<li><a class="" href="multivariate-garch.html"><span class="header-section-number">8</span> Multivariate GARCH</a></li>
+<li><a class="" href="nardl.html"><span class="header-section-number">9</span> NARDL</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/dekayzds/ds-econometrics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="time-series-spillover---gvar" class="section level1" number="7">
+<h1>
+<span class="header-section-number">7</span> Time Series Spillover - GVAR<a class="anchor" aria-label="anchor" href="#time-series-spillover---gvar"><i class="fas fa-link"></i></a>
+</h1>
+<div id="library-1" class="section level2" number="7.1">
+<h2>
+<span class="header-section-number">7.1</span> Library<a class="anchor" aria-label="anchor" href="#library-1"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb190"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">Spillover</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: vars</span></span>
+<span><span class="co">#&gt; Loading required package: MASS</span></span>
+<span><span class="co">#&gt; Loading required package: strucchange</span></span>
+<span><span class="co">#&gt; Loading required package: zoo</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'zoo'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     as.Date, as.Date.numeric</span></span>
+<span><span class="co">#&gt; Loading required package: sandwich</span></span>
+<span><span class="co">#&gt; Loading required package: urca</span></span>
+<span><span class="co">#&gt; Loading required package: lmtest</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.pfaffikus.de">vars</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">urca</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://github.com/mrdwab/splitstackshape">splitstackshape</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r.igraph.org/">igraph</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'igraph'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     decompose, spectrum</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     union</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://had.co.nz/reshape">reshape</a></span><span class="op">)</span></span></code></pre></div>
+</div>
+<div id="data-diebold-yilmaz-2012" class="section level2" number="7.2">
+<h2>
+<span class="header-section-number">7.2</span> Data: Diebold-Yilmaz 2012<a class="anchor" aria-label="anchor" href="#data-diebold-yilmaz-2012"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb191"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">dy2012</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">dy2012</span><span class="op">)</span>  <span class="co"># in log volatility form</span></span>
+<span><span class="co">#&gt;         Date     Stocks      Bonds Commodities         FX</span></span>
+<span><span class="co">#&gt; 1 1999-01-25  -9.891998 -10.081905   -9.797694 -12.971578</span></span>
+<span><span class="co">#&gt; 2 1999-01-26  -9.353294 -10.090498  -11.475212 -13.237477</span></span>
+<span><span class="co">#&gt; 3 1999-01-27  -9.314619 -10.103319  -15.317140  -9.749465</span></span>
+<span><span class="co">#&gt; 4 1999-01-28  -8.997370 -10.090498  -12.044040 -10.853610</span></span>
+<span><span class="co">#&gt; 5 1999-01-29  -8.855955  -9.426092  -12.928477 -11.788281</span></span>
+<span><span class="co">#&gt; 6 1999-02-01 -10.282395  -8.936206  -12.821930 -11.308455</span></span></code></pre></div>
+<p><strong>log volatility return:</strong>
+<span class="math display">\[
+\sigma^2_{it} = 0.361[ln(P^{max}_{i,t}) - ln(P^{min}_{i,t-1}))]^2
+\]</span></p>
+<p><span class="math display">\[
+\sigma_{it} = 100*(\sqrt{252*\sigma^2_{it}})
+\]</span></p>
+<div class="sourceCode" id="cb192"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">dy2012</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "data.frame"</span></span></code></pre></div>
+<div class="sourceCode" id="cb193"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">dy2012</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 2771</span></span></code></pre></div>
+</div>
+<div id="var-model" class="section level2" number="7.3">
+<h2>
+<span class="header-section-number">7.3</span> VAR Model<a class="anchor" aria-label="anchor" href="#var-model"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb194"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/pp.test.html">PP.test</a></span><span class="op">(</span><span class="va">dy2012</span><span class="op">$</span><span class="va">Stocks</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Phillips-Perron Unit Root Test</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; data:  dy2012$Stocks</span></span>
+<span><span class="co">#&gt; Dickey-Fuller = -32.546, Truncation lag parameter =</span></span>
+<span><span class="co">#&gt; 9, p-value = 0.01</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/pp.test.html">PP.test</a></span><span class="op">(</span><span class="va">dy2012</span><span class="op">$</span><span class="va">Bonds</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Phillips-Perron Unit Root Test</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; data:  dy2012$Bonds</span></span>
+<span><span class="co">#&gt; Dickey-Fuller = -41.249, Truncation lag parameter =</span></span>
+<span><span class="co">#&gt; 9, p-value = 0.01</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/pp.test.html">PP.test</a></span><span class="op">(</span><span class="va">dy2012</span><span class="op">$</span><span class="va">Commodities</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Phillips-Perron Unit Root Test</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; data:  dy2012$Commodities</span></span>
+<span><span class="co">#&gt; Dickey-Fuller = -48.523, Truncation lag parameter =</span></span>
+<span><span class="co">#&gt; 9, p-value = 0.01</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/stats/pp.test.html">PP.test</a></span><span class="op">(</span><span class="va">dy2012</span><span class="op">$</span><span class="va">FX</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;  Phillips-Perron Unit Root Test</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; data:  dy2012$FX</span></span>
+<span><span class="co">#&gt; Dickey-Fuller = -47.527, Truncation lag parameter =</span></span>
+<span><span class="co">#&gt; 9, p-value = 0.01</span></span></code></pre></div>
+<div class="sourceCode" id="cb195"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Optimum Lag</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/vars/man/VARselect.html">VARselect</a></span><span class="op">(</span><span class="va">dy2012</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span>, lag.max <span class="op">=</span> <span class="fl">4</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"both"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $selection</span></span>
+<span><span class="co">#&gt; AIC(n)  HQ(n)  SC(n) FPE(n) </span></span>
+<span><span class="co">#&gt;      4      4      4      4 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $criteria</span></span>
+<span><span class="co">#&gt;                  1          2          3          4</span></span>
+<span><span class="co">#&gt; AIC(n) -0.11329876 -0.4490460 -0.5882320 -0.6679637</span></span>
+<span><span class="co">#&gt; HQ(n)  -0.09473562 -0.4181074 -0.5449180 -0.6122743</span></span>
+<span><span class="co">#&gt; SC(n)  -0.06190286 -0.3633861 -0.4683083 -0.5137760</span></span>
+<span><span class="co">#&gt; FPE(n)  0.89288389  0.6382368  0.5553084  0.5127520</span></span></code></pre></div>
+<div class="sourceCode" id="cb196"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># VAR Model</span></span>
+<span><span class="va">VAR_4</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/vars/man/VAR.html">VAR</a></span><span class="op">(</span><span class="va">dy2012</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span>, p<span class="op">=</span><span class="fl">4</span><span class="op">)</span></span>
+<span><span class="va">VAR_4</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; VAR Estimation Results:</span></span>
+<span><span class="co">#&gt; ======================= </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Estimated coefficients for equation Stocks: </span></span>
+<span><span class="co">#&gt; =========================================== </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; Stocks = Stocks.l1 + Bonds.l1 + Commodities.l1 + FX.l1 + Stocks.l2 + Bonds.l2 + Commodities.l2 + FX.l2 + Stocks.l3 + Bonds.l3 + Commodities.l3 + FX.l3 + Stocks.l4 + Bonds.l4 + Commodities.l4 + FX.l4 + const </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      Stocks.l1       Bonds.l1 Commodities.l1          FX.l1 </span></span>
+<span><span class="co">#&gt;   0.1835084630  -0.0242487169  -0.0036337209   0.0219988664 </span></span>
+<span><span class="co">#&gt;      Stocks.l2       Bonds.l2 Commodities.l2          FX.l2 </span></span>
+<span><span class="co">#&gt;   0.2741423171   0.0027926328  -0.0108044031   0.0040316592 </span></span>
+<span><span class="co">#&gt;      Stocks.l3       Bonds.l3 Commodities.l3          FX.l3 </span></span>
+<span><span class="co">#&gt;   0.2025153665   0.0360740337  -0.0158017651   0.0007938866 </span></span>
+<span><span class="co">#&gt;      Stocks.l4       Bonds.l4 Commodities.l4          FX.l4 </span></span>
+<span><span class="co">#&gt;   0.1620506569   0.0333733392  -0.0029608791  -0.0007384703 </span></span>
+<span><span class="co">#&gt;          const </span></span>
+<span><span class="co">#&gt;  -1.3401330918 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Estimated coefficients for equation Bonds: </span></span>
+<span><span class="co">#&gt; ========================================== </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; Bonds = Stocks.l1 + Bonds.l1 + Commodities.l1 + FX.l1 + Stocks.l2 + Bonds.l2 + Commodities.l2 + FX.l2 + Stocks.l3 + Bonds.l3 + Commodities.l3 + FX.l3 + Stocks.l4 + Bonds.l4 + Commodities.l4 + FX.l4 + const </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      Stocks.l1       Bonds.l1 Commodities.l1          FX.l1 </span></span>
+<span><span class="co">#&gt;    0.068141170    0.163772247    0.052592815    0.004319034 </span></span>
+<span><span class="co">#&gt;      Stocks.l2       Bonds.l2 Commodities.l2          FX.l2 </span></span>
+<span><span class="co">#&gt;    0.025511120    0.174716290    0.024936542    0.013962476 </span></span>
+<span><span class="co">#&gt;      Stocks.l3       Bonds.l3 Commodities.l3          FX.l3 </span></span>
+<span><span class="co">#&gt;    0.041353468    0.129894730   -0.043136698    0.011844827 </span></span>
+<span><span class="co">#&gt;      Stocks.l4       Bonds.l4 Commodities.l4          FX.l4 </span></span>
+<span><span class="co">#&gt;   -0.026075514    0.218597337    0.039128430   -0.027491905 </span></span>
+<span><span class="co">#&gt;          const </span></span>
+<span><span class="co">#&gt;   -1.080792116 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Estimated coefficients for equation Commodities: </span></span>
+<span><span class="co">#&gt; ================================================ </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; Commodities = Stocks.l1 + Bonds.l1 + Commodities.l1 + FX.l1 + Stocks.l2 + Bonds.l2 + Commodities.l2 + FX.l2 + Stocks.l3 + Bonds.l3 + Commodities.l3 + FX.l3 + Stocks.l4 + Bonds.l4 + Commodities.l4 + FX.l4 + const </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      Stocks.l1       Bonds.l1 Commodities.l1          FX.l1 </span></span>
+<span><span class="co">#&gt;   -0.022755735    0.098201350    0.183333080    0.048298645 </span></span>
+<span><span class="co">#&gt;      Stocks.l2       Bonds.l2 Commodities.l2          FX.l2 </span></span>
+<span><span class="co">#&gt;   -0.013291588   -0.013132921    0.207410140    0.044188995 </span></span>
+<span><span class="co">#&gt;      Stocks.l3       Bonds.l3 Commodities.l3          FX.l3 </span></span>
+<span><span class="co">#&gt;   -0.049827512    0.004592325    0.185198136   -0.037523992 </span></span>
+<span><span class="co">#&gt;      Stocks.l4       Bonds.l4 Commodities.l4          FX.l4 </span></span>
+<span><span class="co">#&gt;   -0.030251601    0.060251069    0.156050483    0.038706445 </span></span>
+<span><span class="co">#&gt;          const </span></span>
+<span><span class="co">#&gt;   -1.543777242 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Estimated coefficients for equation FX: </span></span>
+<span><span class="co">#&gt; ======================================= </span></span>
+<span><span class="co">#&gt; Call:</span></span>
+<span><span class="co">#&gt; FX = Stocks.l1 + Bonds.l1 + Commodities.l1 + FX.l1 + Stocks.l2 + Bonds.l2 + Commodities.l2 + FX.l2 + Stocks.l3 + Bonds.l3 + Commodities.l3 + FX.l3 + Stocks.l4 + Bonds.l4 + Commodities.l4 + FX.l4 + const </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;      Stocks.l1       Bonds.l1 Commodities.l1          FX.l1 </span></span>
+<span><span class="co">#&gt;     0.06467245    -0.01930672     0.02517504     0.06996402 </span></span>
+<span><span class="co">#&gt;      Stocks.l2       Bonds.l2 Commodities.l2          FX.l2 </span></span>
+<span><span class="co">#&gt;     0.03590206    -0.02073267     0.01066279     0.20847309 </span></span>
+<span><span class="co">#&gt;      Stocks.l3       Bonds.l3 Commodities.l3          FX.l3 </span></span>
+<span><span class="co">#&gt;    -0.01249224     0.03780188    -0.00393800     0.18185464 </span></span>
+<span><span class="co">#&gt;      Stocks.l4       Bonds.l4 Commodities.l4          FX.l4 </span></span>
+<span><span class="co">#&gt;    -0.01552454     0.05072537     0.01667104     0.11443511 </span></span>
+<span><span class="co">#&gt;          const </span></span>
+<span><span class="co">#&gt;    -2.99838336</span></span></code></pre></div>
+</div>
+<div id="volatility-spillover-dy-2012" class="section level2" number="7.4">
+<h2>
+<span class="header-section-number">7.4</span> Volatility Spillover DY-2012<a class="anchor" aria-label="anchor" href="#volatility-spillover-dy-2012"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb197"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Total Spillover Index</span></span>
+<span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spillover/man/G.spillover.html">G.spillover</a></span><span class="op">(</span><span class="va">VAR_4</span>, n.ahead <span class="op">=</span> <span class="fl">10</span>, standardized <span class="op">=</span> <span class="cn">F</span> <span class="op">)</span></span>
+<span><span class="va">sp</span></span>
+<span><span class="co">#&gt;                                Stocks     Bonds Commodities</span></span>
+<span><span class="co">#&gt; Stocks                      88.757002  7.291185   0.3453279</span></span>
+<span><span class="co">#&gt; Bonds                       10.213545 81.445712   2.7269737</span></span>
+<span><span class="co">#&gt; Commodities                  0.468118  3.695953  93.6941893</span></span>
+<span><span class="co">#&gt; FX                           5.691579  7.026017   1.5477592</span></span>
+<span><span class="co">#&gt; C. to others (spillover)    16.373241 18.013154   4.6200608</span></span>
+<span><span class="co">#&gt; C. to others including own 105.130243 99.458866  98.3142500</span></span>
+<span><span class="co">#&gt;                                   FX C. from others</span></span>
+<span><span class="co">#&gt; Stocks                      3.606486      11.242998</span></span>
+<span><span class="co">#&gt; Bonds                       5.613770      18.554288</span></span>
+<span><span class="co">#&gt; Commodities                 2.141740       6.305811</span></span>
+<span><span class="co">#&gt; FX                         85.734645      14.265355</span></span>
+<span><span class="co">#&gt; C. to others (spillover)   11.361996      12.592113</span></span>
+<span><span class="co">#&gt; C. to others including own 97.096641     400.000000</span></span></code></pre></div>
+<p>The total volatility spillover appears in the lower right corner of Table, which indicates that, on average, across our entire sample, 12.6% of the volatility forecast error variance in all four markets comes from spillovers</p>
+<div class="sourceCode" id="cb198"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">Spillover</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Spillover/man/net.html">net</a></span><span class="op">(</span><span class="va">sp</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: 'Spillover::net' is deprecated.</span></span>
+<span><span class="co">#&gt; Use 'dynamic.spillover' instead.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
+<span><span class="co">#&gt;                    To      From        Net Transmitter</span></span>
+<span><span class="co">#&gt; Stocks      16.373241 11.242998  5.1302430        TRUE</span></span>
+<span><span class="co">#&gt; Bonds       18.013154 18.554288 -0.5411342       FALSE</span></span>
+<span><span class="co">#&gt; Commodities  4.620061  6.305811 -1.6857500       FALSE</span></span>
+<span><span class="co">#&gt; FX          11.361996 14.265355 -2.9033588       FALSE</span></span></code></pre></div>
+</div>
+<div id="dynamic-spillover-index-rolling-sample-total-volatility-spillover" class="section level2" number="7.5">
+<h2>
+<span class="header-section-number">7.5</span> Dynamic Spillover Index / rolling-sample total volatility spillover<a class="anchor" aria-label="anchor" href="#dynamic-spillover-index-rolling-sample-total-volatility-spillover"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb199"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Data Setting</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">dy2012</span><span class="op">)</span></span>
+<span><span class="va">dy2012</span><span class="op">$</span><span class="va">Date</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/zoo/man/yearmon.html">as.Date</a></span><span class="op">(</span><span class="va">dy2012</span><span class="op">$</span><span class="va">Date</span>, <span class="st">"%Y-%m-%d"</span><span class="op">)</span></span>
+<span><span class="va">dy2012</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/zoo/man/as.zoo.html">as.zoo</a></span><span class="op">(</span><span class="va">dy2012</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span>, order.by <span class="op">=</span> <span class="va">dy2012</span><span class="op">$</span><span class="va">Date</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">dy2012</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "zoo"</span></span></code></pre></div>
+<div class="sourceCode" id="cb200"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Generalized rolling spillover index based on a VAR(4)</span></span>
+<span><span class="va">G_index</span><span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spillover/man/total.dynamic.spillover.html">total.dynamic.spillover</a></span><span class="op">(</span><span class="va">dy2012</span>, width <span class="op">=</span> <span class="fl">200</span>, index<span class="op">=</span><span class="st">"generalized"</span>, p<span class="op">=</span><span class="fl">4</span><span class="op">)</span> </span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">G_index</span>, n<span class="op">=</span><span class="fl">10</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 1999-11-05 1999-11-08 1999-11-09 1999-11-10 1999-11-11 </span></span>
+<span><span class="co">#&gt;   13.50622   13.60646   13.16968   13.04980   12.95939 </span></span>
+<span><span class="co">#&gt; 1999-11-12 1999-11-15 1999-11-16 1999-11-17 1999-11-18 </span></span>
+<span><span class="co">#&gt;   12.92011   14.27211   14.04579   13.90963   13.85581</span></span></code></pre></div>
+<div class="sourceCode" id="cb201"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span><span class="op">(</span><span class="va">G_index</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Bab7_files/figure-html/unnamed-chunk-12-1.png" width="672"></div>
+</div>
+<div id="directional-volatility-spillovers" class="section level2" number="7.6">
+<h2>
+<span class="header-section-number">7.6</span> Directional volatility spillovers<a class="anchor" aria-label="anchor" href="#directional-volatility-spillovers"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb202"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://zoo.R-Forge.R-project.org/">zoo</a></span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">dy2012</span><span class="op">)</span> <span class="co"># re-import data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/class.html">class</a></span><span class="op">(</span><span class="va">dy2012</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "data.frame"</span></span></code></pre></div>
+<div class="sourceCode" id="cb203"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dy_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spillover/man/dynamic.spillover.html">dynamic.spillover</a></span><span class="op">(</span><span class="va">dy2012</span>, width<span class="op">=</span><span class="fl">200</span>, remove.own <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">dy_results</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 5</span></span>
+<span><span class="co">#&gt;  $ from            :'data.frame':    2771 obs. of  5 variables:</span></span>
+<span><span class="co">#&gt;   ..$ Date       : Factor w/ 2771 levels "1999-01-25","1999-01-26",..: 1 2 3 4 5 6 7 8 9 10 ...</span></span>
+<span><span class="co">#&gt;   ..$ Stocks     : num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ Bonds      : num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ Commodities: num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ FX         : num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;  $ to              :'data.frame':    2771 obs. of  5 variables:</span></span>
+<span><span class="co">#&gt;   ..$ Date       : Factor w/ 2771 levels "1999-01-25","1999-01-26",..: 1 2 3 4 5 6 7 8 9 10 ...</span></span>
+<span><span class="co">#&gt;   ..$ Stocks     : num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ Bonds      : num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ Commodities: num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ FX         : num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;  $ net             :'data.frame':    2771 obs. of  5 variables:</span></span>
+<span><span class="co">#&gt;   ..$ Date       : Factor w/ 2771 levels "1999-01-25","1999-01-26",..: 1 2 3 4 5 6 7 8 9 10 ...</span></span>
+<span><span class="co">#&gt;   ..$ Stocks     : num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ Bonds      : num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ Commodities: num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ FX         : num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;  $ net_pairwise    :'data.frame':    2771 obs. of  7 variables:</span></span>
+<span><span class="co">#&gt;   ..$ Date              : Factor w/ 2771 levels "1999-01-25","1999-01-26",..: 1 2 3 4 5 6 7 8 9 10 ...</span></span>
+<span><span class="co">#&gt;   ..$ Stocks-Bonds      : num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ Stocks-Commodities: num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ Stocks-FX         : num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ Bonds-Commodities : num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ Bonds-FX          : num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;   ..$ Commodities-FX    : num [1:2771] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;  $ from_to_pairwise:'data.frame':    44336 obs. of  3 variables:</span></span>
+<span><span class="co">#&gt;   ..$ Date     : Factor w/ 2771 levels "1999-01-25","1999-01-26",..: 1 2 3 4 5 6 7 8 9 10 ...</span></span>
+<span><span class="co">#&gt;   ..$ variables: chr [1:44336] "From: Stocks  to: Stocks" "From: Stocks  to: Bonds" "From: Stocks  to: Commodities" "From: Stocks  to: FX" ...</span></span>
+<span><span class="co">#&gt;   ..$ value    : num [1:44336] 0 0 0 0 0 0 0 0 0 0 ...</span></span>
+<span><span class="co">#&gt;  - attr(*, "class")= chr "directional.spillover"</span></span></code></pre></div>
+<div class="sourceCode" id="cb204"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Directional volatility spillovers, FROM four asset classes.</span></span>
+<span><span class="va">pp_from</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spillover/man/plotdy.html">plotdy</a></span><span class="op">(</span><span class="va">dy_results</span>, direction <span class="op">=</span> <span class="st">"from"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Bab7_files/figure-html/unnamed-chunk-15-1.png" width="672"></div>
+<div class="sourceCode" id="cb205"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Directional volatility spillovers, TO four asset classes.</span></span>
+<span><span class="va">pp_to</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spillover/man/plotdy.html">plotdy</a></span><span class="op">(</span><span class="va">dy_results</span>, direction <span class="op">=</span> <span class="st">"to"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Bab7_files/figure-html/unnamed-chunk-16-1.png" width="672"></div>
+<div class="sourceCode" id="cb206"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Net volatility spillovers, four asset classes</span></span>
+<span><span class="va">pp_net</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spillover/man/plotdy.html">plotdy</a></span><span class="op">(</span><span class="va">dy_results</span>, direction <span class="op">=</span> <span class="st">"net"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Bab7_files/figure-html/unnamed-chunk-17-1.png" width="672"></div>
+<div class="sourceCode" id="cb207"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Net pairwise volatility spillovers</span></span>
+<span><span class="va">pp_netpairwise</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spillover/man/plotdy.html">plotdy</a></span><span class="op">(</span><span class="va">dy_results</span>, direction <span class="op">=</span> <span class="st">"net_pairwise"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Bab7_files/figure-html/unnamed-chunk-18-1.png" width="672"></div>
+<div class="sourceCode" id="cb208"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">pp_from_to_pairwise</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spillover/man/plotdy.html">plotdy</a></span><span class="op">(</span><span class="va">dy_results</span>, direction <span class="op">=</span> <span class="st">"from_to_pairwise"</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Bab7_files/figure-html/unnamed-chunk-19-1.png" width="672"></div>
+</div>
+<div id="connectedness-network" class="section level2" number="7.7">
+<h2>
+<span class="header-section-number">7.7</span> Connectedness Network<a class="anchor" aria-label="anchor" href="#connectedness-network"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb209"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/Spillover/man/G.spillover.html">G.spillover</a></span><span class="op">(</span><span class="va">VAR_4</span>, n.ahead <span class="op">=</span> <span class="fl">10</span>, standardized <span class="op">=</span> <span class="cn">F</span> <span class="op">)</span></span>
+<span><span class="va">datanet</span> <span class="op">&lt;-</span>  <span class="fu">Spillover</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/Spillover/man/net.html">net</a></span><span class="op">(</span><span class="va">sp</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: 'Spillover::net' is deprecated.</span></span>
+<span><span class="co">#&gt; Use 'dynamic.spillover' instead.</span></span>
+<span><span class="co">#&gt; See help("Deprecated")</span></span>
+<span><span class="va">datanet</span></span>
+<span><span class="co">#&gt;                    To      From        Net Transmitter</span></span>
+<span><span class="co">#&gt; Stocks      16.373241 11.242998  5.1302430        TRUE</span></span>
+<span><span class="co">#&gt; Bonds       18.013154 18.554288 -0.5411342       FALSE</span></span>
+<span><span class="co">#&gt; Commodities  4.620061  6.305811 -1.6857500       FALSE</span></span>
+<span><span class="co">#&gt; FX          11.361996 14.265355 -2.9033588       FALSE</span></span></code></pre></div>
+<div class="sourceCode" id="cb210"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Data frame node</span></span>
+<span><span class="va">node_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">datanet</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">datanet</span><span class="op">)</span>,<span class="va">datanet</span><span class="op">$</span><span class="va">Net</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">node_df</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"id"</span>,<span class="st">"label"</span>,<span class="st">"size"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">node_df</span><span class="op">)</span></span>
+<span><span class="co">#&gt;            id       label       size</span></span>
+<span><span class="co">#&gt; 1      Stocks      Stocks  5.1302430</span></span>
+<span><span class="co">#&gt; 2       Bonds       Bonds -0.5411342</span></span>
+<span><span class="co">#&gt; 3 Commodities Commodities -1.6857500</span></span>
+<span><span class="co">#&gt; 4          FX          FX -2.9033588</span></span></code></pre></div>
+<div class="sourceCode" id="cb211"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">sp</span> <span class="op">&lt;-</span> <span class="va">sp</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
+<span><span class="va">sp</span></span>
+<span><span class="co">#&gt;                Stocks     Bonds Commodities        FX</span></span>
+<span><span class="co">#&gt; Stocks      88.757002  7.291185   0.3453279  3.606486</span></span>
+<span><span class="co">#&gt; Bonds       10.213545 81.445712   2.7269737  5.613770</span></span>
+<span><span class="co">#&gt; Commodities  0.468118  3.695953  93.6941893  2.141740</span></span>
+<span><span class="co">#&gt; FX           5.691579  7.026017   1.5477592 85.734645</span></span></code></pre></div>
+<div class="sourceCode" id="cb212"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Data frame edge</span></span>
+<span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/reshape/man/melt-24.html">melt</a></span><span class="op">(</span><span class="va">sp</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/reshape/man/melt-24.html">melt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lower.tri.html">upper.tri</a></span><span class="op">(</span><span class="va">sp</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">value</span>,<span class="op">]</span> <span class="co"># FROM</span></span>
+<span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/reshape/man/melt-24.html">melt</a></span><span class="op">(</span><span class="va">sp</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/reshape/man/melt-24.html">melt</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lower.tri.html">lower.tri</a></span><span class="op">(</span><span class="va">sp</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">value</span>,<span class="op">]</span> <span class="co"># TO</span></span>
+<span><span class="va">m1</span> <span class="op">&lt;-</span> <span class="va">m1</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="va">m1</span><span class="op">$</span><span class="va">X1</span><span class="op">)</span>,<span class="op">]</span></span>
+<span><span class="va">m2</span> <span class="op">&lt;-</span> <span class="va">m2</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html">order</a></span><span class="op">(</span><span class="va">m2</span><span class="op">$</span><span class="va">X2</span><span class="op">)</span>,<span class="op">]</span></span></code></pre></div>
+<div class="sourceCode" id="cb213"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">edge_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="st">"to"</span><span class="op">=</span><span class="va">m1</span><span class="op">[</span>,<span class="fl">2</span><span class="op">]</span>,<span class="st">"from"</span><span class="op">=</span><span class="va">m1</span><span class="op">[</span>,<span class="fl">1</span><span class="op">]</span>, <span class="st">"weight"</span> <span class="op">=</span> <span class="va">m1</span><span class="op">$</span><span class="va">value</span><span class="op">-</span><span class="va">m2</span><span class="op">$</span><span class="va">value</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'dplyr' was built under R version 4.2.3</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:reshape':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     rename</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:igraph':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     as_data_frame, groups, union</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:MASS':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     select</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     filter, lag</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
+<span><span class="va">edge_df_positive</span> <span class="op">&lt;-</span> <span class="va">edge_df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">weight</span> <span class="op">&gt;=</span> <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="va">edge_df_negative</span> <span class="op">&lt;-</span> <span class="va">edge_df</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">weight</span> <span class="op">&lt;</span> <span class="fl">0</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">edge_df_negative</span> <span class="op">&lt;-</span> <span class="va">edge_df_negative</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>weight <span class="op">=</span> <span class="op">-</span><span class="va">weight</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>to <span class="op">=</span> <span class="va">from</span>, from <span class="op">=</span> <span class="va">to</span><span class="op">)</span></span>
+<span><span class="va">edge_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html">bind_rows</a></span><span class="op">(</span><span class="va">edge_df_positive</span>, <span class="va">edge_df_negative</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb214"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">positive_weight</span> <span class="op">&lt;-</span> <span class="va">edge_df</span><span class="op">$</span><span class="va">weight</span><span class="op">[</span><span class="va">edge_df</span><span class="op">$</span><span class="va">weight</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">]</span></span>
+<span><span class="va">negative_weight</span> <span class="op">&lt;-</span> <span class="va">edge_df</span><span class="op">$</span><span class="va">weight</span><span class="op">[</span><span class="va">edge_df</span><span class="op">$</span><span class="va">weight</span> <span class="op">&lt;</span> <span class="fl">0</span><span class="op">]</span></span>
+<span><span class="va">positive_size</span> <span class="op">&lt;-</span> <span class="va">node_df</span><span class="op">$</span><span class="va">size</span><span class="op">[</span><span class="va">node_df</span><span class="op">$</span><span class="va">size</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">]</span></span>
+<span><span class="va">negative_size</span> <span class="op">&lt;-</span> <span class="va">node_df</span><span class="op">$</span><span class="va">size</span><span class="op">[</span><span class="va">node_df</span><span class="op">$</span><span class="va">size</span> <span class="op">&lt;</span> <span class="fl">0</span><span class="op">]</span></span>
+<span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">RColorBrewer</span><span class="op">)</span></span>
+<span><span class="va">Transmitter_color</span> <span class="op">&lt;-</span> <span class="st">"#2ca25f"</span></span>
+<span><span class="va">else_color</span> <span class="op">&lt;-</span> <span class="st">"#de2d26"</span></span>
+<span><span class="va">color_vec1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">edge_df</span><span class="op">$</span><span class="va">weight</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="va">Transmitter_color</span>, <span class="va">else_color</span><span class="op">)</span></span>
+<span><span class="va">color_vec2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">node_df</span><span class="op">$</span><span class="va">size</span> <span class="op">&gt;</span> <span class="fl">0</span>, <span class="va">Transmitter_color</span>, <span class="va">else_color</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb215"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r.igraph.org/reference/graph_from_data_frame.html">graph_from_data_frame</a></span><span class="op">(</span><span class="va">edge_df</span>, directed <span class="op">=</span> <span class="cn">TRUE</span>, vertices <span class="op">=</span> <span class="va">node_df</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://r.igraph.org/reference/E.html">E</a></span><span class="op">(</span><span class="va">graph</span><span class="op">)</span><span class="op">$</span><span class="va">color</span> <span class="op">&lt;-</span> <span class="st">"black"</span> <span class="co"># Egde</span></span>
+<span><span class="fu"><a href="https://r.igraph.org/reference/V.html">V</a></span><span class="op">(</span><span class="va">graph</span><span class="op">)</span><span class="op">$</span><span class="va">color</span> <span class="op">&lt;-</span> <span class="va">color_vec2</span> <span class="co"># Node</span></span>
+<span><span class="fu"><a href="https://r.igraph.org/reference/E.html">E</a></span><span class="op">(</span><span class="va">graph</span><span class="op">)</span><span class="op">$</span><span class="va">weight</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">edge_df</span><span class="op">$</span><span class="va">weight</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://r.igraph.org/reference/V.html">V</a></span><span class="op">(</span><span class="va">graph</span><span class="op">)</span><span class="op">$</span><span class="va">size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">node_df</span><span class="op">$</span><span class="va">size</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb216"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://r.igraph.org/reference/E.html">E</a></span><span class="op">(</span><span class="va">graph</span><span class="op">)</span><span class="op">$</span><span class="va">weight</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r.igraph.org/reference/E.html">E</a></span><span class="op">(</span><span class="va">graph</span><span class="op">)</span><span class="op">$</span><span class="va">weight</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="fu"><a href="https://r.igraph.org/reference/E.html">E</a></span><span class="op">(</span><span class="va">graph</span><span class="op">)</span><span class="op">$</span><span class="va">weight</span><span class="op">)</span> <span class="op">*</span> <span class="fl">2</span></span>
+<span><span class="fu"><a href="https://r.igraph.org/reference/V.html">V</a></span><span class="op">(</span><span class="va">graph</span><span class="op">)</span><span class="op">$</span><span class="va">size</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://r.igraph.org/reference/V.html">V</a></span><span class="op">(</span><span class="va">graph</span><span class="op">)</span><span class="op">$</span><span class="va">size</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="fu"><a href="https://r.igraph.org/reference/V.html">V</a></span><span class="op">(</span><span class="va">graph</span><span class="op">)</span><span class="op">$</span><span class="va">size</span><span class="op">)</span> <span class="op">*</span> <span class="fl">50</span></span></code></pre></div>
+<div class="sourceCode" id="cb217"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span><span class="op">(</span><span class="va">graph</span>, edge.width <span class="op">=</span> <span class="fu"><a href="https://r.igraph.org/reference/E.html">E</a></span><span class="op">(</span><span class="va">graph</span><span class="op">)</span><span class="op">$</span><span class="va">weight</span>, layout<span class="op">=</span><span class="fu"><a href="https://r.igraph.org/reference/layout_in_circle.html">layout_in_circle</a></span><span class="op">(</span><span class="va">graph</span><span class="op">)</span>, edge.arrow.mode<span class="op">=</span><span class="fl">2</span>, edge.arrow.size<span class="op">=</span><span class="fl">0.2</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="07-Bab7_files/figure-html/unnamed-chunk-28-1.png" width="672"></div>
+
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="spatial-regression.html"><span class="header-section-number">6</span> Spatial Regression</a></div>
+<div class="next"><a href="multivariate-garch.html"><span class="header-section-number">8</span> Multivariate GARCH</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#time-series-spillover---gvar"><span class="header-section-number">7</span> Time Series Spillover - GVAR</a></li>
+<li><a class="nav-link" href="#library-1"><span class="header-section-number">7.1</span> Library</a></li>
+<li><a class="nav-link" href="#data-diebold-yilmaz-2012"><span class="header-section-number">7.2</span> Data: Diebold-Yilmaz 2012</a></li>
+<li><a class="nav-link" href="#var-model"><span class="header-section-number">7.3</span> VAR Model</a></li>
+<li><a class="nav-link" href="#volatility-spillover-dy-2012"><span class="header-section-number">7.4</span> Volatility Spillover DY-2012</a></li>
+<li><a class="nav-link" href="#dynamic-spillover-index-rolling-sample-total-volatility-spillover"><span class="header-section-number">7.5</span> Dynamic Spillover Index / rolling-sample total volatility spillover</a></li>
+<li><a class="nav-link" href="#directional-volatility-spillovers"><span class="header-section-number">7.6</span> Directional volatility spillovers</a></li>
+<li><a class="nav-link" href="#connectedness-network"><span class="header-section-number">7.7</span> Connectedness Network</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/dekayzds/ds-econometrics/blob/master/07-Bab7.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/dekayzds/ds-econometrics/edit/master/07-Bab7.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Application of Econometric Models with RStudio</strong>" was written by Deri Siswara. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,288 @@
+#  Multivariate Time Series
+## VAR/VECM
+
+```{r}
+library(readxl)
+data1 <- read_excel("Data/Bab 4/VECM.xlsx")
+tsdata = data1[,c(-1,-2,-3,-4)]
+tsdata = ts(tsdata, start=c(2010,1), frequency=12)
+plot(tsdata)
+```
+
+```{r}
+# Stationary Test
+library(aTSA)
+adf.test(tsdata[,"LnIHK"])
+adf.test(tsdata[,"LnRM2"])
+adf.test(tsdata[,"LnIPI"])
+```
+
+```{r}
+adf.test(diff(tsdata[,"LnIHK"]))
+adf.test(diff(tsdata[,"LnRM2"]))
+adf.test(diff(tsdata[,"LnIPI"]))
+```
+
+
+```{r}
+library(urca)
+library(vars)
+
+# Lag Optimum
+VARselect(tsdata, lag.max = 10)
+```
+
+```{r}
+# Cointegration Test
+cointest_eigen = ca.jo(tsdata, K=2, type="eigen", ecdet="const", spec="longrun")
+summary(cointest_eigen)
+```
+
+```{r}
+# VECM
+modelvecm = cajorls(cointest_eigen)
+```
+
+
+```{r}
+summary(modelvecm$rlm)
+```
+
+```{r}
+modelvecm$beta
+```
+
+```{r}
+vecm = vec2var(cointest_eigen)
+```
+
+
+```{r}
+# IRF
+ir = irf(vecm, n.ahead=48)
+plot(ir)
+```
+
+
+```{r}
+# FEVD
+vd = fevd(vecm, n.ahead=48)
+plot(vd)
+```
+
+```{r}
+vd_LnIHK = as.matrix(vd$LnIHK)
+barplot(t(vd_LnIHK), beside=FALSE, main="FEVD LnIHK", xlab="periode", col=c("blue","red","green"), legend.text=TRUE) 
+```
+
+```{r}
+vd_LnRM2 = as.matrix(vd$LnRM2)
+barplot(t(vd_LnRM2), beside=FALSE, main="FEVD LnRM2", xlab="periode", col=c("blue","red","green"), legend.text=TRUE)
+```
+
+```{r}
+vd_LnIPI = as.matrix(vd$LnIPI)
+barplot(t(vd_LnIPI), beside=FALSE, main="FEVD LnIPI", xlab="periode", col=c("blue","red","green"), legend.text=TRUE)
+```
+
+
+```{r}
+# VAR FD, If No cointegtration
+D1LnIHK = diff(tsdata[,"LnIHK"])
+D1LnRM2 = diff(tsdata[,"LnRM2"])
+D1LnIPI = diff(tsdata[,"LnIPI"])
+datadiff = cbind(D1LnIHK, D1LnRM2, D1LnIPI)
+plot(datadiff)
+```
+
+
+```{r}
+VARselect(datadiff, lag.max = 10)
+```
+
+
+```{r}
+varfd = VAR(datadiff, p=3, type="both")
+summary(varfd)
+```
+
+```{r}
+# Stablity VAR
+plot(stability(varfd))
+```
+
+```{r}
+# IRF
+impres = irf(varfd, n.ahead=48)
+plot(impres)
+```
+## SVAR
+```{r}
+library(readxl)
+data1 <- read_excel("Data/Bab 4/SVAR.xlsx")
+head(data1)
+```
+
+
+```{r}
+tsdata = data1[,c(-1)]
+tsdata = ts(tsdata, start=c(2006,1), frequency=4)
+plot(tsdata)
+```
+
+```{r}
+library(aTSA)
+adf.test(tsdata[,"growth"])
+adf.test(tsdata[,"inflation"])
+adf.test(tsdata[,"interest"])
+```
+
+
+```{r}
+#cLag Optimum
+library(vars)
+VARselect(tsdata, lag.max = 10)
+```
+
+
+```{r}
+# VAR Estimation
+var.est1 = VAR(tsdata, p = 2, type = "none")
+summary(var.est1)
+```
+
+```{r}
+# Matriks A for SVAR AB-model
+a.mat = diag(3)
+diag(a.mat) = NA
+a.mat[2,1] = NA
+a.mat[3,1] = NA
+a.mat[3,2] = NA
+a.mat
+```
+
+```{r}
+# Matriks B for SVAR AB-model
+b.mat = diag(3)
+diag(b.mat) = NA
+b.mat
+```
+
+```{r}
+# Est SVAR
+svar1 = SVAR(var.est1, Amat = a.mat, Bmat = b.mat, max.iter = 10000, hessian = TRUE)
+svar1
+```
+
+
+```{r,warning=FALSE}
+# IRF
+inf.int = irf(svar1, response = "interest", impulse = "inflation", n.ahead = 40)
+plot(inf.int)
+inf.gdp = irf(svar1, response = "growth", impulse = "inflation", n.ahead = 40)
+plot(inf.gdp)
+inf.inf = irf(svar1, response = "inflation", impulse = "inflation", n.ahead = 40)
+plot(inf.inf)
+gdp.inf = irf(svar1, response = "inflation", impulse = "growth", n.ahead = 40)
+plot(gdp.inf)
+```
+```{r}
+#FEVD
+vd = fevd(svar1, n.ahead=40)
+plot(vd)
+```
+
+## ARDL
+```{r}
+library(ARDL)
+# data sample
+data(denmark)
+denmark <- data.frame(denmark)
+attach(denmark)
+str(denmark)
+```
+
+```{r}
+denmark = ts(denmark, start=c(1974,1), frequency=12)
+plot(denmark)
+```
+
+
+```{r}
+library(tseries)
+pp.test(LRM) #Non-Stationary
+pp.test(LRY) #Non-Stationary
+pp.test(IBO) #Non-Stationary
+pp.test(IDE) #Non-Stationary
+pp.test(diff(LRM)) #Stationary
+pp.test(diff(LRY)) #Stationary
+pp.test(diff(IBO)) #Stationary
+pp.test(diff(IDE)) #Stationary
+```
+```{r}
+# ARDL Auto Search Optimum Lag
+models <- auto_ardl(LRM ~ LRY + IBO + IDE, data = denmark, max_order = 5)
+# The top 20 models according to the AIC
+models$top_orders
+```
+
+```{r}
+# The best model was found to be the ARDL(3,1,3,2)
+ardl_3132 <- models$best_model
+ardl_3132$order
+```
+
+```{r}
+summary(ardl_3132)
+```
+
+```{r}
+library(lmtest)
+bgtest(ardl_3132) # Autocorrelation Test
+bptest(ardl_3132) # Heteroscedasticity Test
+```
+
+```{r}
+# Cointegration Test
+fbounds <- bounds_f_test(ardl_3132, case = 2, alpha = 0.05)
+fbounds$tab
+```
+
+```{r}
+# ARDL-ECM
+uecm_3132 <- uecm(LRM ~ LRY + IBO + IDE, data = denmark, order = c(3,1,3,2))
+summary(uecm_3132)
+```
+
+```{r}
+# ARDL-ECM 2
+recm_3132 <- recm(uecm_3132, case = 2)
+summary(recm_3132)
+```
+
+```{r}
+# Short Run Coefficients
+multipliers(ardl_3132, type = "sr")
+```
+
+```{r}
+# Long Run Coefficients
+multipliers(ardl_3132, type = "lr")
+```
+
+
+```{r}
+library(lmtest) # for resettest()
+library(strucchange) # for efp(), and sctest()
+resettest(uecm_3132, type = c("regressor"))
+```
+
+```{r}
+# Stability
+uecm_3132_lm_names <- to_lm(uecm_3132, fix_names = TRUE)
+fluctuation <- efp(uecm_3132_lm_names$full_formula, 
+                   data = uecm_3132_lm_names$model)
+plot(fluctuation)
+```
+
+

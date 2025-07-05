@@ -1,0 +1,61 @@
+# NARDL
+
+```{r}
+# install.packages("ardl.nardl")
+library(ardl.nardl)
+```
+
+```{r}
+# Data
+datanardl <- read.csv("Data/Bab 9/datanardl.csv")
+head(datanardl)
+```
+
+```{r}
+# Phillips-Perron Unit Root Test
+PP.test(datanardl$price.Vietnam)
+PP.test(datanardl$price.China)
+```
+
+```{r,warning=FALSE}
+# Auto Selecet Model
+model1 <- gets_nardl_uecm(x =  datanardl,
+                          decomp = 'price.China',
+                          dep_var = 'price.Vietnam',
+                          p_order = c(5),
+                          q_order = c(5),
+                          graph_save = TRUE,
+                          case = 3,
+                          F_HC = TRUE)
+```
+
+```{r}
+# Cointegratio Test
+model1$cointegration$Fstat
+```
+
+```{r}
+# NARDL Form
+summary(model1$Parsimonious_NARDL_fit)
+```
+
+```{r}
+# NARDL ECM Form
+summary(model1$Parsimonious_ECM_fit)
+```
+
+```{r}
+# Long Run Coefficients
+model1$Longrun_relation
+```
+
+```{r}
+# Long Run Asymetric Test
+model1$longrun_asym
+```
+
+```{r}
+# Short Run Asymetric Test
+model1$Shortrun_asym
+```
+

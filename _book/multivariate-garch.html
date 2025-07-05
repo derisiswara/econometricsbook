@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Chapter 8 Multivariate GARCH | Application of Econometric Models with RStudio</title>
+<meta name="author" content="Deri Siswara">
+<meta name="description" content="8.1 DCC-GARCH library(quantmod) #&gt; Warning: package 'quantmod' was built under R version 4.2.3 #&gt; Loading required package: xts #&gt; Warning: package 'xts' was built under R version 4.2.3 #&gt; Loading...">
+<meta name="generator" content="bookdown 0.38 with bs4_book()">
+<meta property="og:title" content="Chapter 8 Multivariate GARCH | Application of Econometric Models with RStudio">
+<meta property="og:type" content="book">
+<meta property="og:description" content="8.1 DCC-GARCH library(quantmod) #&gt; Warning: package 'quantmod' was built under R version 4.2.3 #&gt; Loading required package: xts #&gt; Warning: package 'xts' was built under R version 4.2.3 #&gt; Loading...">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chapter 8 Multivariate GARCH | Application of Econometric Models with RStudio">
+<meta name="twitter:description" content="8.1 DCC-GARCH library(quantmod) #&gt; Warning: package 'quantmod' was built under R version 4.2.3 #&gt; Loading required package: xts #&gt; Warning: package 'xts' was built under R version 4.2.3 #&gt; Loading...">
+<!-- JS --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://kit.fontawesome.com/6ecbd6c532.js" crossorigin="anonymous"></script><script src="libs/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<link href="libs/bootstrap-4.6.0/bootstrap.min.css" rel="stylesheet">
+<script src="libs/bootstrap-4.6.0/bootstrap.bundle.min.js"></script><script src="libs/bs3compat-0.7.0/transition.js"></script><script src="libs/bs3compat-0.7.0/tabs.js"></script><script src="libs/bs3compat-0.7.0/bs3compat.js"></script><link href="libs/bs4_book-1.0.0/bs4_book.css" rel="stylesheet">
+<script src="libs/bs4_book-1.0.0/bs4_book.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- CSS --><style type="text/css">
+    
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  </style>
+<link rel="stylesheet" href="style.css">
+</head>
+<body data-spy="scroll" data-target="#toc">
+
+<div class="container-fluid">
+<div class="row">
+  <header class="col-sm-12 col-lg-3 sidebar sidebar-book"><a class="sr-only sr-only-focusable" href="#content">Skip to main content</a>
+
+    <div class="d-flex align-items-start justify-content-between">
+      <h1>
+        <a href="index.html" title="">Application of Econometric Models with RStudio</a>
+      </h1>
+      <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
+    </div>
+
+    <div id="main-nav" class="collapse-lg">
+      <form role="search">
+        <input id="search" class="form-control" type="search" placeholder="Search" aria-label="Search">
+</form>
+
+      <nav aria-label="Table of contents"><h2>Table of contents</h2>
+        <ul class="book-toc list-unstyled">
+<li><a class="" href="index.html">Welcome</a></li>
+<li><a class="" href="basics-of-r.html"><span class="header-section-number">1</span> Basics of R</a></li>
+<li><a class="" href="basic-linear-regression.html"><span class="header-section-number">2</span> Basic Linear Regression</a></li>
+<li><a class="" href="univariate-time-series.html"><span class="header-section-number">3</span> Univariate Time Series</a></li>
+<li><a class="" href="multivariate-time-series.html"><span class="header-section-number">4</span> Multivariate Time Series</a></li>
+<li><a class="" href="panel-data-regression.html"><span class="header-section-number">5</span> Panel Data Regression</a></li>
+<li><a class="" href="spatial-regression.html"><span class="header-section-number">6</span> Spatial Regression</a></li>
+<li><a class="" href="time-series-spillover---gvar.html"><span class="header-section-number">7</span> Time Series Spillover - GVAR</a></li>
+<li><a class="active" href="multivariate-garch.html"><span class="header-section-number">8</span> Multivariate GARCH</a></li>
+<li><a class="" href="nardl.html"><span class="header-section-number">9</span> NARDL</a></li>
+</ul>
+
+        <div class="book-extra">
+          <p><a id="book-repo" href="https://github.com/dekayzds/ds-econometrics">View book source <i class="fab fa-github"></i></a></p>
+        </div>
+      </nav>
+</div>
+  </header><main class="col-sm-12 col-md-9 col-lg-7" id="content"><div id="multivariate-garch" class="section level1" number="8">
+<h1>
+<span class="header-section-number">8</span> Multivariate GARCH<a class="anchor" aria-label="anchor" href="#multivariate-garch"><i class="fas fa-link"></i></a>
+</h1>
+<div id="dcc-garch" class="section level2" number="8.1">
+<h2>
+<span class="header-section-number">8.1</span> DCC-GARCH<a class="anchor" aria-label="anchor" href="#dcc-garch"><i class="fas fa-link"></i></a>
+</h2>
+<div class="sourceCode" id="cb218"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://www.quantmod.com/">quantmod</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'quantmod' was built under R version 4.2.3</span></span>
+<span><span class="co">#&gt; Loading required package: xts</span></span>
+<span><span class="co">#&gt; Warning: package 'xts' was built under R version 4.2.3</span></span>
+<span><span class="co">#&gt; Loading required package: zoo</span></span>
+<span><span class="co">#&gt; Warning: package 'zoo' was built under R version 4.2.3</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'zoo'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     as.Date, as.Date.numeric</span></span>
+<span><span class="co">#&gt; Loading required package: TTR</span></span>
+<span><span class="co">#&gt; Warning: package 'TTR' was built under R version 4.2.3</span></span>
+<span><span class="co">#&gt; Registered S3 method overwritten by 'quantmod':</span></span>
+<span><span class="co">#&gt;   method            from</span></span>
+<span><span class="co">#&gt;   as.zoo.data.frame zoo</span></span>
+<span></span>
+<span><span class="co"># Needed Internet Connection !! alike install packages</span></span>
+<span><span class="co"># Stock Ticker</span></span>
+<span><span class="va">stocks</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"ASII.JK"</span>,<span class="st">"BBCA.JK"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">data_list</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">stocks</span>, <span class="kw">function</span><span class="op">(</span><span class="va">stock</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/quantmod/man/getSymbols.html">getSymbols</a></span><span class="op">(</span><span class="va">stock</span>, src <span class="op">=</span> <span class="st">"yahoo"</span>, from <span class="op">=</span> <span class="st">"2018-01-01"</span>, to<span class="op">=</span><span class="st">"2022-12-31"</span>, auto.assign <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: ASII.JK contains missing values. Some functions</span></span>
+<span><span class="co">#&gt; will not work if objects contain missing values in the</span></span>
+<span><span class="co">#&gt; middle of the series. Consider using na.omit(),</span></span>
+<span><span class="co">#&gt; na.approx(), na.fill(), etc to remove or replace them.</span></span>
+<span></span>
+<span><span class="co"># Daily Return</span></span>
+<span><span class="va">returns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="va">data_list</span>, <span class="kw">function</span><span class="op">(</span><span class="va">data</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/quantmod/man/periodReturn.html">dailyReturn</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/quantmod/man/OHLC.Transformations.html">Cl</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning in to_period(xx, period = on.opts[[period]], ...):</span></span>
+<span><span class="co">#&gt; missing values removed from data</span></span>
+<span></span>
+<span><span class="co"># Combine data</span></span>
+<span><span class="va">combined_returns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">merge</span>, <span class="va">returns</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">combined_returns</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">stocks</span></span>
+<span><span class="va">combined_returns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/na.fail.html">na.omit</a></span><span class="op">(</span><span class="va">combined_returns</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">combined_returns</span><span class="op">)</span></span>
+<span><span class="co">#&gt;                 ASII.JK     BBCA.JK</span></span>
+<span><span class="co">#&gt; 2018-01-01  0.000000000 0.000000000</span></span>
+<span><span class="co">#&gt; 2018-01-02 -0.012048193 0.000000000</span></span>
+<span><span class="co">#&gt; 2018-01-03 -0.018292683 0.000000000</span></span>
+<span><span class="co">#&gt; 2018-01-04  0.021739130 0.014840183</span></span>
+<span><span class="co">#&gt; 2018-01-05  0.009118541 0.001124859</span></span>
+<span><span class="co">#&gt; 2018-01-08  0.000000000 0.004494382</span></span></code></pre></div>
+<div class="sourceCode" id="cb219"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://www.unstarched.net">rugarch</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'rugarch' was built under R version 4.2.3</span></span>
+<span><span class="co">#&gt; Loading required package: parallel</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'rugarch'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     sigma</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://www.unstarched.net">rmgarch</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Warning: package 'rmgarch' was built under R version 4.2.2</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'rmgarch'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:xts':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     first, last</span></span>
+<span></span>
+<span><span class="co"># GARCH Specification for a Single Asset</span></span>
+<span><span class="va">unispec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rugarch/man/ugarchspec-methods.html">ugarchspec</a></span><span class="op">(</span>mean.model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>armaOrder <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                     variance.model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>model <span class="op">=</span> <span class="st">"gjrGARCH"</span>,</span>
+<span>                                           garchOrder <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                     distribution.model <span class="op">=</span> <span class="st">"norm"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Determine the number of assets</span></span>
+<span><span class="va">n_assets</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">combined_returns</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Replicate GARCH Specification for All Assets</span></span>
+<span><span class="va">garch_spec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rugarch/man/multispec-methods.html">multispec</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">replicate</a></span><span class="op">(</span><span class="va">n_assets</span>, <span class="va">unispec</span><span class="op">)</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="co"># DCC Model Specification</span></span>
+<span><span class="va">dcc_spec</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rmgarch/man/dccspec-methods.html">dccspec</a></span><span class="op">(</span>uspec <span class="op">=</span> <span class="va">garch_spec</span>, </span>
+<span>                   dccOrder <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">1</span><span class="op">)</span>, </span>
+<span>                   distribution <span class="op">=</span> <span class="st">"mvnorm"</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb220"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Fit DCC</span></span>
+<span><span class="va">dcc.fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rmgarch/man/dccfit-methods.html">dccfit</a></span><span class="op">(</span><span class="va">dcc_spec</span>, </span>
+<span>                 data <span class="op">=</span> <span class="va">combined_returns</span>, </span>
+<span>                 fit.control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>scale<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb221"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">dcc.fit</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; *---------------------------------*</span></span>
+<span><span class="co">#&gt; *          DCC GARCH Fit          *</span></span>
+<span><span class="co">#&gt; *---------------------------------*</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Distribution         :  mvnorm</span></span>
+<span><span class="co">#&gt; Model                :  DCC(1,1)</span></span>
+<span><span class="co">#&gt; No. Parameters       :  13</span></span>
+<span><span class="co">#&gt; [VAR GARCH DCC UncQ] : [0+10+2+1]</span></span>
+<span><span class="co">#&gt; No. Series           :  2</span></span>
+<span><span class="co">#&gt; No. Obs.             :  1253</span></span>
+<span><span class="co">#&gt; Log-Likelihood       :  6804.626</span></span>
+<span><span class="co">#&gt; Av.Log-Likelihood    :  5.43 </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Optimal Parameters</span></span>
+<span><span class="co">#&gt; -----------------------------------</span></span>
+<span><span class="co">#&gt;                   Estimate  Std. Error   t value Pr(&gt;|t|)</span></span>
+<span><span class="co">#&gt; [ASII.JK].mu     -0.000439    0.000538  -0.81598 0.414511</span></span>
+<span><span class="co">#&gt; [ASII.JK].omega   0.000013    0.000001  12.73775 0.000000</span></span>
+<span><span class="co">#&gt; [ASII.JK].alpha1  0.029271    0.009480   3.08769 0.002017</span></span>
+<span><span class="co">#&gt; [ASII.JK].beta1   0.912942    0.007720 118.25044 0.000000</span></span>
+<span><span class="co">#&gt; [ASII.JK].gamma1  0.056569    0.023773   2.37951 0.017336</span></span>
+<span><span class="co">#&gt; [BBCA.JK].mu      0.000635    0.000531   1.19596 0.231713</span></span>
+<span><span class="co">#&gt; [BBCA.JK].omega   0.000015    0.000008   1.90305 0.057034</span></span>
+<span><span class="co">#&gt; [BBCA.JK].alpha1  0.053503    0.030193   1.77204 0.076388</span></span>
+<span><span class="co">#&gt; [BBCA.JK].beta1   0.820666    0.052706  15.57060 0.000000</span></span>
+<span><span class="co">#&gt; [BBCA.JK].gamma1  0.127614    0.044277   2.88218 0.003949</span></span>
+<span><span class="co">#&gt; [Joint]dcca1      0.050241    0.033905   1.48184 0.138382</span></span>
+<span><span class="co">#&gt; [Joint]dccb1      0.766226    0.197975   3.87032 0.000109</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Information Criteria</span></span>
+<span><span class="co">#&gt; ---------------------</span></span>
+<span><span class="co">#&gt;                     </span></span>
+<span><span class="co">#&gt; Akaike       -10.841</span></span>
+<span><span class="co">#&gt; Bayes        -10.787</span></span>
+<span><span class="co">#&gt; Shibata      -10.841</span></span>
+<span><span class="co">#&gt; Hannan-Quinn -10.821</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Elapsed time : 1.267241</span></span></code></pre></div>
+<div class="sourceCode" id="cb222"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Conditional Covariances</span></span>
+<span><span class="va">cov</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rmgarch/man/goGARCHfit-class.html">rcov</a></span><span class="op">(</span><span class="va">dcc.fit</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/dim.html">dim</a></span><span class="op">(</span><span class="va">cov</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1]    2    2 1253</span></span>
+<span><span class="va">cov</span><span class="op">[</span>,,<span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
+<span><span class="co">#&gt; , , 2018-01-01</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;              ASII.JK      BBCA.JK</span></span>
+<span><span class="co">#&gt; ASII.JK 0.0004465808 0.0001387231</span></span>
+<span><span class="co">#&gt; BBCA.JK 0.0001387231 0.0002527424</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; , , 2018-01-02</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;              ASII.JK      BBCA.JK</span></span>
+<span><span class="co">#&gt; ASII.JK 0.0004207082 0.0001246004</span></span>
+<span><span class="co">#&gt; BBCA.JK 0.0001246004 0.0002229686</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; , , 2018-01-03</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;              ASII.JK      BBCA.JK</span></span>
+<span><span class="co">#&gt; ASII.JK 0.0004086507 0.0001138079</span></span>
+<span><span class="co">#&gt; BBCA.JK 0.0001138079 0.0001985342</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; , , 2018-01-04</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;              ASII.JK      BBCA.JK</span></span>
+<span><span class="co">#&gt; ASII.JK 0.0004134355 0.0001058398</span></span>
+<span><span class="co">#&gt; BBCA.JK 0.0001058398 0.0001784818</span></span></code></pre></div>
+<div class="sourceCode" id="cb223"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Conditional Volatilities</span></span>
+<span><span class="va">vol</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rugarch/man/uGARCHfit-class.html">sigma</a></span><span class="op">(</span><span class="va">dcc.fit</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">vol</span><span class="op">)</span></span>
+<span><span class="co">#&gt;               ASII.JK    BBCA.JK</span></span>
+<span><span class="co">#&gt; 2018-01-01 0.02113246 0.01589787</span></span>
+<span><span class="co">#&gt; 2018-01-02 0.02051117 0.01493213</span></span>
+<span><span class="co">#&gt; 2018-01-03 0.02021511 0.01409022</span></span>
+<span><span class="co">#&gt; 2018-01-04 0.02033311 0.01335971</span></span>
+<span><span class="co">#&gt; 2018-01-05 0.02012066 0.01314336</span></span>
+<span><span class="co">#&gt; 2018-01-08 0.01962830 0.01254032</span></span></code></pre></div>
+<div class="sourceCode" id="cb224"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span><span class="op">(</span><span class="va">vol</span><span class="op">$</span><span class="va">ASII.JK</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="08-Bab8_files/figure-html/unnamed-chunk-7-1.png" width="672"></div>
+<div class="sourceCode" id="cb225"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span><span class="op">(</span><span class="va">vol</span><span class="op">$</span><span class="va">BBCA.JK</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="08-Bab8_files/figure-html/unnamed-chunk-8-1.png" width="672"></div>
+<div class="sourceCode" id="cb226"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Conditional Correlations</span></span>
+<span><span class="va">cor</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rmgarch/man/goGARCHfit-class.html">rcor</a></span><span class="op">(</span><span class="va">dcc.fit</span><span class="op">)</span></span>
+<span><span class="va">cor</span><span class="op">[</span>,,<span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
+<span><span class="co">#&gt; , , 2018-01-01</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;           ASII.JK   BBCA.JK</span></span>
+<span><span class="co">#&gt; ASII.JK 1.0000000 0.4129141</span></span>
+<span><span class="co">#&gt; BBCA.JK 0.4129141 1.0000000</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; , , 2018-01-02</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;           ASII.JK   BBCA.JK</span></span>
+<span><span class="co">#&gt; ASII.JK 1.0000000 0.4068245</span></span>
+<span><span class="co">#&gt; BBCA.JK 0.4068245 1.0000000</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; , , 2018-01-03</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;           ASII.JK   BBCA.JK</span></span>
+<span><span class="co">#&gt; ASII.JK 1.0000000 0.3995568</span></span>
+<span><span class="co">#&gt; BBCA.JK 0.3995568 1.0000000</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; , , 2018-01-04</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;           ASII.JK   BBCA.JK</span></span>
+<span><span class="co">#&gt; ASII.JK 1.0000000 0.3896261</span></span>
+<span><span class="co">#&gt; BBCA.JK 0.3896261 1.0000000</span></span></code></pre></div>
+<div class="sourceCode" id="cb227"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">date</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/row.names.html">row.names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">cor</span><span class="op">[</span><span class="fl">1</span>,<span class="fl">1</span>,<span class="op">]</span><span class="op">)</span><span class="op">)</span> </span>
+<span><span class="va">cor2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/xts/man/xts.html">xts</a></span><span class="op">(</span><span class="va">cor</span><span class="op">[</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="op">]</span>, order.by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/zoo/man/yearmon.html">as.Date</a></span><span class="op">(</span><span class="va">date</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/plot.html">plot</a></span><span class="op">(</span><span class="va">cor2</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="08-Bab8_files/figure-html/unnamed-chunk-10-1.png" width="672"></div>
+<div class="sourceCode" id="cb228"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">forecast</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/rmgarch/man/dccforecast-methods.html">dccforecast</a></span><span class="op">(</span><span class="va">dcc.fit</span>, n.ahead <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb229"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">forecast</span><span class="op">@</span><span class="va">mforecast</span><span class="op">$</span><span class="va">H</span> <span class="co">#Cov</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt; , , 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;              [,1]         [,2]</span></span>
+<span><span class="co">#&gt; [1,] 2.400993e-04 5.997349e-05</span></span>
+<span><span class="co">#&gt; [2,] 5.997349e-05 1.426082e-04</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; , , 2</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;              [,1]         [,2]</span></span>
+<span><span class="co">#&gt; [1,] 2.460159e-04 6.413043e-05</span></span>
+<span><span class="co">#&gt; [2,] 6.413043e-05 1.492415e-04</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; , , 3</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;              [,1]         [,2]</span></span>
+<span><span class="co">#&gt; [1,] 2.517579e-04 6.792145e-05</span></span>
+<span><span class="co">#&gt; [2,] 6.792145e-05 1.554634e-04</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; , , 4</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;              [,1]         [,2]</span></span>
+<span><span class="co">#&gt; [1,] 2.573305e-04 7.138252e-05</span></span>
+<span><span class="co">#&gt; [2,] 7.138252e-05 1.612995e-04</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; , , 5</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;              [,1]         [,2]</span></span>
+<span><span class="co">#&gt; [1,] 2.627387e-04 7.454746e-05</span></span>
+<span><span class="co">#&gt; [2,] 7.454746e-05 1.667735e-04</span></span></code></pre></div>
+<div class="sourceCode" id="cb230"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">forecast</span><span class="op">@</span><span class="va">mforecast</span><span class="op">$</span><span class="va">R</span> <span class="co">#Cor</span></span>
+<span><span class="co">#&gt; [[1]]</span></span>
+<span><span class="co">#&gt; , , 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;           [,1]      [,2]</span></span>
+<span><span class="co">#&gt; [1,] 1.0000000 0.3241094</span></span>
+<span><span class="co">#&gt; [2,] 0.3241094 1.0000000</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; , , 2</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;           [,1]      [,2]</span></span>
+<span><span class="co">#&gt; [1,] 1.0000000 0.3346861</span></span>
+<span><span class="co">#&gt; [2,] 0.3346861 1.0000000</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; , , 3</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;           [,1]      [,2]</span></span>
+<span><span class="co">#&gt; [1,] 1.0000000 0.3433217</span></span>
+<span><span class="co">#&gt; [2,] 0.3433217 1.0000000</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; , , 4</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;           [,1]      [,2]</span></span>
+<span><span class="co">#&gt; [1,] 1.0000000 0.3503723</span></span>
+<span><span class="co">#&gt; [2,] 0.3503723 1.0000000</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; , , 5</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;          [,1]     [,2]</span></span>
+<span><span class="co">#&gt; [1,] 1.000000 0.356129</span></span>
+<span><span class="co">#&gt; [2,] 0.356129 1.000000</span></span></code></pre></div>
+<div class="sourceCode" id="cb231"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">forecast</span><span class="op">@</span><span class="va">mforecast</span><span class="op">$</span><span class="va">mu</span></span>
+<span><span class="co">#&gt; , , 1</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;               [,1]         [,2]</span></span>
+<span><span class="co">#&gt; [1,] -0.0004392956 0.0006354141</span></span>
+<span><span class="co">#&gt; [2,] -0.0004392956 0.0006354141</span></span>
+<span><span class="co">#&gt; [3,] -0.0004392956 0.0006354141</span></span>
+<span><span class="co">#&gt; [4,] -0.0004392956 0.0006354141</span></span>
+<span><span class="co">#&gt; [5,] -0.0004392956 0.0006354141</span></span></code></pre></div>
+
+</div>
+</div>
+  <div class="chapter-nav">
+<div class="prev"><a href="time-series-spillover---gvar.html"><span class="header-section-number">7</span> Time Series Spillover - GVAR</a></div>
+<div class="next"><a href="nardl.html"><span class="header-section-number">9</span> NARDL</a></div>
+</div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
+    <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
+      <ul class="nav navbar-nav">
+<li><a class="nav-link" href="#multivariate-garch"><span class="header-section-number">8</span> Multivariate GARCH</a></li>
+<li><a class="nav-link" href="#dcc-garch"><span class="header-section-number">8.1</span> DCC-GARCH</a></li>
+</ul>
+
+      <div class="book-extra">
+        <ul class="list-unstyled">
+<li><a id="book-source" href="https://github.com/dekayzds/ds-econometrics/blob/master/08-Bab8.Rmd">View source <i class="fab fa-github"></i></a></li>
+          <li><a id="book-edit" href="https://github.com/dekayzds/ds-econometrics/edit/master/08-Bab8.Rmd">Edit this page <i class="fab fa-github"></i></a></li>
+        </ul>
+</div>
+    </nav>
+</div>
+
+</div>
+</div> <!-- .container -->
+
+<footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>"<strong>Application of Econometric Models with RStudio</strong>" was written by Deri Siswara. </p>
+  </div>
+
+  <div class="col-12 col-md-6 mt-3">
+    <p>This book was built by the <a class="text-light" href="https://bookdown.org">bookdown</a> R package.</p>
+  </div>
+
+</div></div>
+</footer><!-- dynamically load mathjax for compatibility with self-contained --><script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/latest.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script><script type="text/x-mathjax-config">const popovers = document.querySelectorAll('a.footnote-ref[data-toggle="popover"]');
+for (let popover of popovers) {
+  const div = document.createElement('div');
+  div.setAttribute('style', 'position: absolute; top: 0, left:0; width:0, height:0, overflow: hidden; visibility: hidden;');
+  div.innerHTML = popover.getAttribute('data-content');
+
+  var has_math = div.querySelector("span.math");
+  if (has_math) {
+    document.body.appendChild(div);
+    MathJax.Hub.Queue(["Typeset", MathJax.Hub, div]);
+    MathJax.Hub.Queue(function() {
+      popover.setAttribute('data-content', div.innerHTML);
+      document.body.removeChild(div);
+    })
+  }
+}
+</script>
+</body>
+</html>

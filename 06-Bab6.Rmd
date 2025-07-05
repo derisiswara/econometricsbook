@@ -1,0 +1,222 @@
+# Spatial Regression
+## Library
+```{r}
+# install.packages("spdep")
+# install.packages("spatialreg")
+# install.packages("RColorBrewer")
+# install.packages("splm")
+# install.packages("sf")
+# install.packages("ggplot2")
+library(spdep)
+library(spatialreg)
+library(RColorBrewer)
+library(splm)
+library(sf)
+library(ggplot2)
+```
+## Cross-Section
+```{r}
+library(readxl)
+provinsi <- read_excel("Data/Bab6/provinsi Indonesia.xlsx")
+head(provinsi)
+```
+### OLS Model
+```{r}
+model1 = log(pdrb) ~ log(investment) + log(infra) + log(revenue)
+ols = lm(model1, data=provinsi)
+summary(ols)
+```
+
+### Weight Matrix
+```{r}
+migrasi <- read_excel("Data/Bab6/matriks migrasi.xlsx", sheet = 2, col_names = FALSE)
+migrasi = as.matrix(migrasi)
+W.migrasi = mat2listw(migrasi)
+```
+
+### Moran Test and Plot
+```{r}
+moran.lm = lm.morantest(ols, W.migrasi)
+moran.lm
+moran.plot(ols$residuals, W.migrasi)
+```
+
+### LM Test
+
+```{r}
+LM = lm.LMtests(ols, W.migrasi, test="all")
+LM
+```
+
+### SAR Model
+```{r}
+sar.provinsi = lagsarlm(model1, data=provinsi, W.migrasi)
+summary(sar.provinsi)
+```
+
+### Impacts (Spillover)
+
+```{r}
+impacts(sar.provinsi, listw=W.migrasi)
+```
+
+### SEM Model
+
+```{r}
+sem.provinsi = errorsarlm(model1, data=provinsi, W.migrasi)
+summary(sem.provinsi)
+```
+
+## Spatial Panel
+```{r}
+library(readxl)
+paneljateng <- read_excel("Data/Bab6/panel jateng.xlsx")
+head(paneljateng)
+```
+
+### Static Panel Regression
+
+```{r}
+library(plm)
+modelpanel = log(PDRB) ~ log(AK) + log(PAD) + log(UMK) + log(IPM)
+fem1 = plm(modelpanel, data=paneljateng, index=c("Region", "Tahun"), model="within")
+rem1 = plm(modelpanel, data=paneljateng, index=c("Region", "Tahun"), model="random")
+phtest(fem1, rem1)
+```
+
+```{r}
+library(lmtest)
+bptest(fem1)
+pbgtest(fem1)
+```
+
+### Depndency Test
+
+```{r}
+pcdtest(fem1, test="lm")
+pcdtest(fem1, test="cd")
+```
+
+### Maps Visualization 
+```{r}
+jateng.map = st_read('Data/Bab6/peta jateng/Jawa_Tengah.shp')
+```
+
+
+```{r}
+jateng2011 = subset(paneljateng,(Tahun==2011))
+jateng2011 = merge(jateng.map, jateng2011, by.x="KABKOTNO", by.y="NO")
+jateng2011 <- st_make_valid(jateng2011)
+ggplot(jateng2011) +
+  geom_sf(aes(fill = PDRB)) +
+  scale_fill_gradientn(colours = brewer.pal(5, "Blues"),
+                       values = scales::rescale(seq(min(jateng2011$PDRB), 
+                                                    max(jateng2011$PDRB)*1.01, 
+                                                    length = 6))) +
+  theme_minimal() +
+  labs(fill = "PDRB")
+```
+
+```{r}
+ggplot(jateng2011) +
+  geom_sf(aes(fill = IPM)) +
+  scale_fill_gradientn(colours = brewer.pal(5, "Greens"),
+                       values = scales::rescale(seq(min(jateng2011$IPM), 
+                                                    max(jateng2011$IPM)*1.01, 
+                                                    length = 6))) +
+  theme_minimal() +
+  labs(fill = "IPM")
+```
+
+### Function for Spatial Panel Evalutation
+
+```{r}
+godf.spml<-function(object, k=2, criterion=c("AIC", "BIC"),  ...){
+  s<-summary(object)
+  l<-s$logLik
+  np<- length(coef(s))
+  N<- nrow(s$model)
+  if(criterion=="AIC"){
+    aic<- -2*l+k*np
+    names(aic)<-"AIC"
+    return(aic)
+  }
+  if(criterion=="BIC"){
+    bic<- -2*l+log(N)*np
+    names(bic)<-"BIC"
+    if(k!=2){
+      warning("parameter <k> not used for BIC")
+    }
+    return(bic)
+  }
+}
+```
+
+### Spatial Panel Model with Contiguity Weight Matrix
+
+```{r}
+jateng.map <- st_make_valid(jateng.map)
+listqueen = poly2nb(jateng.map, queen=TRUE)
+W.queen = nb2listw(listqueen, style="W")
+W.queen
+```
+
+```{r}
+# SAR Model
+sar.fem.contig = spml(modelpanel, data=paneljateng, listw=W.queen, model="within", lag=TRUE, spatial.error="none")
+sar.rem.contig = spml(modelpanel, data=paneljateng, listw=W.queen, model="random", lag=TRUE, spatial.error="none")
+sphtest(sar.fem.contig, sar.rem.contig)
+godf.spml(sar.rem.contig, criterion="AIC")
+```
+
+```{r}
+# SEM Model
+sem.fem.contig = spml(modelpanel, data=paneljateng, listw=W.queen, model="within", lag=FALSE, spatial.error="b")
+sem.rem.contig = spml(modelpanel, data=paneljateng, listw=W.queen, model="random", lag=FALSE, spatial.error="b")
+sphtest(sem.fem.contig, sem.rem.contig)
+godf.spml(sem.rem.contig, criterion="AIC")
+```
+
+
+### Spatial Panel Model with KNN Weight Matrix
+```{r}
+# K-nearest neighbour with 5 neighbour 
+centroids <- st_centroid(jateng.map)
+coords <- st_coordinates(centroids)
+neighbour = knearneigh(coords, k=5, longlat=T) 
+neighbourlist = knn2nb(neighbour)                              
+mat.knn5 = nb2mat(neighbourlist, style="W")                     
+W.knn5 = nb2listw(neighbourlist, style="W")
+W.knn5
+```
+
+```{r}
+# SAR Model
+sar.fem.5nn = spml(modelpanel, data=paneljateng, listw=W.knn5, model="within", lag=TRUE, spatial.error="none")
+sar.rem.5nn = spml(modelpanel, data=paneljateng, listw=W.knn5, model="random", lag=TRUE, spatial.error="none")
+sphtest(sar.fem.5nn, sar.rem.5nn)
+godf.spml(sar.rem.5nn, criterion="AIC")
+
+# SEM Model
+sem.fem.5nn = spml(modelpanel, data=paneljateng, listw=W.knn5, model="within", lag=FALSE, spatial.error="b")
+sem.rem.5nn = spml(modelpanel, data=paneljateng, listw=W.knn5, model="random", lag=FALSE, spatial.error="b")
+sphtest(sem.fem.5nn, sem.rem.5nn)
+godf.spml(sem.rem.5nn, criterion="AIC")
+```
+
+### Best Model
+```{r}
+summary(sar.rem.5nn)
+```
+
+### Impacts (Spillovr) - Only for SAR Model
+```{r}
+# Direct and Indirect Effect
+time = length(unique(paneljateng$Tahun))
+sW.5knn = kronecker(Diagonal(time), listw2dgCMatrix(W.knn5))
+set.seed(12345)
+trMatc = trW(sW.5knn, type="mult")
+imp = impacts(sar.rem.5nn, tr = trMatc, R = 200)
+summary(imp, zstats=TRUE, short=T)
+```
+
